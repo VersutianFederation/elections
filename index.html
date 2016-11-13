@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha256-mIfhv/h3MLq3WSiSlduuZO3saRNzzuf1LK8w3z3l3JY=" crossorigin="anonymous" />
+    </head>
+    <body>
+        <header class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-3"><b>Versutian</b> Elections</h1>
+                <p class="lead">Welcome to the official voting site for the Versutian Federation.</p>
+                <p>Here, you may cast your ballot for current elections to participate in our democracy.</p>
+                <div class="btn-group" role="group" aria-label="Header button group">
+                    <a class="btn btn-primary" href="#elections">Get started</a>
+                    <a class="btn btn-secondary" href="faq.html">How does it work?</a>
+                </div>
+            </div>
+        </header>
+        
+        <section id="elections" class="container">
+            <h1>1. Verify your nation</h1>
+            <p class="lead">Just enter your nation name, and then copy the verification code from the NationStates.net page <small>(you may need to scroll down)</small>.</p>
+            <iframe src="https://www.nationstates.net/page=verify_login#proof_of_login_checksum" width="100%" style="border:none"></iframe>
+            <br>
+            <form class="form-inline">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="nation-name" placeholder="Nation name">
+                    <input type="text" class="form-control" id="verification-code" placeholder="Code">
+                </div>
+            </form>
+            <button class="btn btn-primary" onclick="verify()">Verify nation &#x2192</button>
+        </section>
+        
+        <script>
+            var nationName;
+            var verificationCode;
+            function verify() {
+                nationName = document.getElementById('nation-name').value;
+                verificationCode = document.getElementById('verification-code').value;
+                var elections = document.getElementById('elections');
+                elections.innerHTML = '<h1>2. Vote</h1>';
+                elections.innerHTML += '<p class="lead">Select an election, ' + nationName + '.</p>';
+            }
+        </script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha256-/5pHDZh2fv1eZImyfiThtB5Ag4LqDjyittT7fLjdT/8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha256-j+XrvkQ4jJ99Hj0pJKPr6k0RCgxDDSTs3PBqLrX2EMc=" crossorigin="anonymous"></script>
+    </body>
+</html>
