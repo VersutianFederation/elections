@@ -11,28 +11,36 @@
             <div class="container">
                 <h1 class="display-3"><b>Versutian</b> Elections</h1>
                 <p class="lead">Welcome to the official voting site for the Versutian Federation.</p>
-                <p>Here, you may cast your ballot for current elections to participate in our democracy.</p>
-                <div class="btn-group" role="group" aria-label="Header button group">
-                    <a class="btn btn-primary" href="#elections">Get started</a>
-                    <a class="btn btn-secondary" href="faq.html">How does it work?</a>
-                </div>
+                <p>Here, you may cast your ballot for current elections to participate in our democracy with a simple two step process &mdash; no registration required.</p>
+                <a class="btn btn-secondary" href="faq.html">Learn more</a>
             </div>
         </header>
         
         <section id="elections" class="container">
-            <h1>1. Verify your nation</h1>
-            <p class="lead">Just enter your nation name, and then copy the verification code from the NationStates.net page <small>(you may need to scroll down)</small>.</p>
-            <iframe src="https://www.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 20vh; width: 100%"></iframe>
-            <br>
+            <h1>1. Login with NationStates</h1>
             <div id="alert"></div>
-            <form class="form-inline">
-                <div class="form-group">
-                    <input type="text" class="form-control" id="nation-name" placeholder="Name (ex. North Arkana)">
-                    <input type="text" class="form-control" id="verification-code" placeholder="Code">
+            <form class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name">
+                    <p id="nationHelpBlock" class="form-text text-muted">
+                        Your nation's short name, as it is displayed on NationStates, for example, North Arkana.
+                    </p>
                 </div>
             </form>
             <br>
-            <button class="btn btn-primary" onclick="verify()">Verify nation &#x2192</button>
+            <iframe src="https://www.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 50%"></iframe>
+            <br>
+            <form class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="verification-code" aria-describedby="codeHelpBlock" placeholder="Code">
+                    <p id="codeHelpBlock" class="form-text text-muted">
+                        Copy the code you see from the NationStates.net page into this box.
+                    </p>
+                </div>
+            </form>
+            <br>
+            <button class="btn btn-primary" onclick="verify()">Login</button>
+            <br><br>
         </section>
         
         <script>
@@ -46,25 +54,29 @@
                 nationName = document.getElementById('nation-name').value;
                 internalName = nationName.toLowerCase().replace(/ /g, "_");
                 verificationCode = document.getElementById('verification-code').value;
-                // TODO: verify code is valid
-                if (nationName != null && nationName != "" && verificationCode != null && verificationCode != "") {
-                    var elections = document.getElementById('elections');
-                    if (officials.indexOf(internalName) != -1) {
-                        accessLevel = "OFFICIAL";
-                    } else if (protectors.indexOf(internalName) != -1) {
-                        accessLevel = "PROTECTOR";
-                    }
-                    elections.innerHTML = '<h1>2. Vote</h1>';
-                    elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
-                    elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">North Arkana <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
-                    if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
-                        elections.innerHTML += '<hr>';
-                        elections.innerHTML += '<h2>Create new election</h2>';
-                        elections.innerHTML += '<form>';
-                        elections.innerHTML += '<div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
-                    }
-                } else {
+                if (nationName == null || nationName == "") {
                     document.getElementById('alert').innerHTML = '<div class="alert alert-warning" role="alert"><b>Invalid information entered.</b> Please review entered information before submitting again.</div>';
+                    return;
+                }
+                // TODO: verify code is valid
+                if (verificationCode == null || verificationCode == "") {
+                    document.getElementById('alert').innerHTML = '<div class="alert alert-warning" role="alert"><b>Invalid information entered.</b> Please review entered information before submitting again.</div>';
+                    return;
+                }
+                var elections = document.getElementById('elections');
+                if (officials.indexOf(internalName) != -1) {
+                    accessLevel = "OFFICIAL";
+                } else if (protectors.indexOf(internalName) != -1) {
+                    accessLevel = "PROTECTOR";
+                }
+                elections.innerHTML = '<h1>2. Vote</h1>';
+                elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
+                elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">North Arkana <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
+                if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
+                    elections.innerHTML += '<hr>';
+                    elections.innerHTML += '<h2>Create new election</h2>';
+                    elections.innerHTML += '<form>';
+                    elections.innerHTML += '<div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
                 }
             }
             
