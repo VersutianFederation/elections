@@ -22,26 +22,63 @@
         <section id="elections" class="container">
             <h1>1. Verify your nation</h1>
             <p class="lead">Just enter your nation name, and then copy the verification code from the NationStates.net page <small>(you may need to scroll down)</small>.</p>
-            <iframe src="https://www.nationstates.net/page=verify_login#proof_of_login_checksum" width="100%" style="border:none"></iframe>
+            <iframe src="https://www.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 20vh; width: 100%"></iframe>
             <br>
+            <div id="alert"></div>
             <form class="form-inline">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="nation-name" placeholder="Nation name">
+                    <input type="text" class="form-control" id="nation-name" placeholder="Name (ex. North Arkana)">
                     <input type="text" class="form-control" id="verification-code" placeholder="Code">
                 </div>
             </form>
+            <br>
             <button class="btn btn-primary" onclick="verify()">Verify nation &#x2192</button>
         </section>
         
         <script>
             var nationName;
+            var internalName;
             var verificationCode;
+            var accessLevel = "CITIZEN";
+            var officials = ["north_arkana", "asairia"];
+            var protectors = ["alamei"];
             function verify() {
                 nationName = document.getElementById('nation-name').value;
+                internalName = nationName.toLowerCase().replace(/ /g, "_");
                 verificationCode = document.getElementById('verification-code').value;
-                var elections = document.getElementById('elections');
-                elections.innerHTML = '<h1>2. Vote</h1>';
-                elections.innerHTML += '<p class="lead">Select an election, ' + nationName + '.</p>';
+                // TODO: verify code is valid
+                if (nationName != null && nationName != "" && verificationCode != null && verificationCode != "") {
+                    var elections = document.getElementById('elections');
+                    if (officials.indexOf(internalName) != -1) {
+                        accessLevel = "OFFICIAL";
+                    } else if (protectors.indexOf(internalName) != -1) {
+                        accessLevel = "PROTECTOR";
+                    }
+                    elections.innerHTML = '<h1>2. Vote</h1>';
+                    elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
+                    elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">North Arkana <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
+                    if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
+                        elections.innerHTML += '<hr>';
+                        elections.innerHTML += '<h2>Create new election</h2>';
+                        elections.innerHTML += '<form>';
+                        elections.innerHTML += '<div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
+                    }
+                } else {
+                    document.getElementById('alert').innerHTML = '<div class="alert alert-warning" role="alert"><b>Invalid information entered.</b> Please review entered information before submitting again.</div>';
+                }
+            }
+            
+            function add() {
+                
+            }
+            
+            function vote() {
+                var innerVote = document.getElementById('inner-vote');
+                innerVote.innerHTML = '<p class="card-text">Thank you for voting!</p>';
+                innerVote.innerHTML += '<div class="text-xs-center"><b>North Arkana</b> 100%</div>';
+                innerVote.innerHTML += '<progress class="progress" value="100" max="100"></progress>';
+                innerVote.innerHTML += '<div class="text-xs-center"><b>Opponent</b> 0%</div>';
+                innerVote.innerHTML += '<progress class="progress" value="0" max="100"></progress>';
             }
         </script>
         
