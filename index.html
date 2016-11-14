@@ -21,19 +21,25 @@
             <h1>1. Login with NationStates</h1>
             <div id="alert"></div>
             <form>
-                <input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name">
-                <p id="nationHelpBlock" class="form-text text-muted">
-                    Your nation's short name, as it is displayed on NationStates, for example, North Arkana.
-                </p>
+                <div class="form-group" id="nation-name-group">
+                    <input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name">
+                    <div id="nation-name-feedback"></div>
+                    <p id="nationHelpBlock" class="form-text text-muted">
+                        Your nation's short name, as it is displayed on NationStates, for example, North Arkana.
+                    </p>
+                </div>
             </form>
             <br>
             <iframe src="https://www.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%"></iframe>
             <br>
             <form>
-                <input type="text" class="form-control" id="verification-code" aria-describedby="codeHelpBlock" placeholder="Code">
-                <p id="codeHelpBlock" class="form-text text-muted">
-                    Copy the code you see from the NationStates.net page into this box.
-                </p>
+                <div class="form-group" id="verification-code-group">
+                    <input type="text" class="form-control" id="verification-code" aria-describedby="codeHelpBlock" placeholder="Code">
+                    <div id="verification-code-feedback"></div>
+                    <p id="codeHelpBlock" class="form-text text-muted">
+                        Copy the code you see from the NationStates.net page into this box.
+                    </p>
+                </div>
             </form>
             <br>
             <button class="btn btn-primary" onclick="verify()">Login</button>
@@ -48,16 +54,26 @@
             var officials = ["north_arkana", "asairia"];
             var protectors = ["alamei"];
             function verify() {
+                document.getElementById('nation-name-feedback').innerHTML = '';
+                document.getElementById('nation-name-group').classList.remove('has-warning');
+                document.getElementById('verification-code-feedback').innerHTML = '';
+                document.getElementById('verification-code-group').classList.remove('has-warning');
                 nationName = document.getElementById('nation-name').value;
                 internalName = nationName.toLowerCase().replace(/ /g, "_");
                 verificationCode = document.getElementById('verification-code').value;
+                var invalid = false;
                 if (nationName == null || nationName == "") {
-                    document.getElementById('alert').innerHTML = '<div class="alert alert-warning" role="alert"><b>Invalid information entered.</b> Please review entered information before submitting again.</div>';
-                    return;
+                    document.getElementById('nation-name-group').classList.add('has-warning');
+                    document.getElementById('nation-name-feedback').innerHTML = '<div class="form-control-feedback">Something\'s not right about that nation name.</div>';
+                    invalid = true;
                 }
                 // TODO: verify code is valid
                 if (verificationCode == null || verificationCode == "") {
-                    document.getElementById('alert').innerHTML = '<div class="alert alert-warning" role="alert"><b>Invalid information entered.</b> Please review entered information before submitting again.</div>';
+                    document.getElementById('verification-code-group').classList.add('has-warning');
+                    document.getElementById('verification-code-feedback').innerHTML = '<div class="form-control-feedback">Your verification code was not approved. Try getting a new code.</div>';
+                    invalid = true;
+                }
+                if (invalid) {
                     return;
                 }
                 var elections = document.getElementById('elections');
@@ -72,8 +88,7 @@
                 if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                     elections.innerHTML += '<hr>';
                     elections.innerHTML += '<h2>Create new election</h2>';
-                    elections.innerHTML += '<form>';
-                    elections.innerHTML += '<div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
+                    elections.innerHTML += '<form><div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
                 }
             }
             
