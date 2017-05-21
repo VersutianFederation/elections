@@ -25,12 +25,13 @@
                     <input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name">
                     <div id="nation-name-feedback"></div>
                     <p id="nationHelpBlock" class="form-text text-muted">
-                        Your nation's short name, as it is displayed on NationStates, for example, North Arkana.
+                        Your nation's short name, as it is displayed on NationStates, for example, Akohos.
                     </p>
                 </div>
             </form>
             <br>
             <iframe src="https://embed.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%"></iframe>
+            <p>If there is an error, please login to NationStates.net on a separate page.</p>
             <br>
             <form>
                 <div class="form-group" id="verification-code-group">
@@ -51,7 +52,7 @@
             var internalName;
             var verificationCode;
             var accessLevel = "CITIZEN";
-            var officials = ["north_arkana", "asairia"];
+            var officials = ["north_arkana", "asairia", "akohos"];
             var protectors = ["alamei"];
             function verify() {
                 document.getElementById('nation-name-feedback').innerHTML = '';
@@ -62,16 +63,28 @@
                 internalName = nationName.toLowerCase().replace(/ /g, "_");
                 verificationCode = document.getElementById('verification-code').value;
                 var invalid = false;
-                if (nationName == null || nationName == "") {
+                if (nationName == null || nationName.length < 2) {
                     document.getElementById('nation-name-group').classList.add('has-warning');
                     document.getElementById('nation-name-feedback').innerHTML = '<div class="form-control-feedback">Something\'s not right about that nation name.</div>';
                     invalid = true;
                 }
                 // TODO: verify code is valid
                 if (verificationCode == null || verificationCode == "") {
-                    document.getElementById('verification-code-group').classList.add('has-warning');
-                    document.getElementById('verification-code-feedback').innerHTML = '<div class="form-control-feedback">Your verification code was not approved. Try getting a new code.</div>';
+                    denyCode();
                     invalid = true;
+                } else {
+                    var url = "https://www.nationstates.net/cgi-bin/api.cgi?a=verify&nation=" + nationName + "&checksum=" + verificationCode;
+                    var request = new XMLHttpRequest();
+                    request.open("GET", url, false);
+                    request.send();
+                    var response = request.responseText;
+                    console.log(response);
+                    if (response != 1) {
+                        denyCode();
+                        invalid = true;
+                    } else {
+                        invalid = false;
+                    }
                 }
                 if (invalid) {
                     return;
@@ -84,12 +97,17 @@
                 }
                 elections.innerHTML = '<h1>2. Vote</h1>';
                 elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
-                elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">North Arkana <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
+                elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">Akohos <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
                 if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                     elections.innerHTML += '<hr>';
                     elections.innerHTML += '<h2>Create new election</h2>';
                     elections.innerHTML += '<form><div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
                 }
+            }
+            
+            function denyCode() {
+                document.getElementById('verification-code-group').classList.add('has-warning');
+                document.getElementById('verification-code-feedback').innerHTML = '<div class="form-control-feedback">Your verification code was not approved. Try getting a new code.</div>';
             }
             
             function add() {
@@ -99,7 +117,7 @@
             function vote() {
                 var innerVote = document.getElementById('inner-vote');
                 innerVote.innerHTML = '<p class="card-text">Thank you for voting!</p>';
-                innerVote.innerHTML += '<div class="text-xs-center"><b>North Arkana</b> 100%</div>';
+                innerVote.innerHTML += '<div class="text-xs-center"><b>Akohos</b> 100%</div>';
                 innerVote.innerHTML += '<progress class="progress" value="100" max="100"></progress>';
                 innerVote.innerHTML += '<div class="text-xs-center"><b>Opponent</b> 0%</div>';
                 innerVote.innerHTML += '<progress class="progress" value="0" max="100"></progress>';
