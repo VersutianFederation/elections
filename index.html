@@ -84,7 +84,7 @@
                     if (user) {
                         internalName = user.uid;
                         var nameXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + internalName + "&q=name", true);
-                        nationName = nameXML.getElementsByTagName("").item(0);
+                        nationName = nameXML.getElementsByTagName("NAME").item(0);
                         
                         elections.innerHTML = '<h1>Vote</h1>';
                         elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
