@@ -196,8 +196,8 @@
                     snapshot.forEach(function(candidate) {
                         elections.innerHTML += '<button class="btn btn-secondary" onclick="vote()">' + candidate.key + '</button>';
                     });
+                    elections.innerHTML += '<hr>'; 
                 });
-                elections.innerHTML += '<hr>';
             }
             
             function clearElections() {
