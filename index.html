@@ -195,10 +195,10 @@
                     elections.innerHTML += '<h3>' + data.val().election + '</h3>';
                     snapshot.forEach(function(candidate) {
                         elections.innerHTML += '<button class="btn btn-secondary" id="' + data.key + '-' + candidate.key + '">' + candidate.key + ' - ' + candidate.numChildren() + '</button>';
-                        var button = document.getElementById(data.key + '-' + candidate.key);
-                        console.log(button.onclick);
-                        button.onclick = function () { firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true); };
-                        console.log(button.onclick);
+                        document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function() {
+                            console.log('test');
+                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
+                        }, false);
                     });
                     elections.innerHTML += '<hr>'
                 });
