@@ -18,7 +18,7 @@
         </header>
         
         <section id="elections" class="container">
-            <h1>1. Login with NationStates</h1>
+            <h1>Login with NationStates</h1>
             <div id="alert"></div>
             <form>
                 <div class="form-group" id="nation-name-group">
@@ -82,11 +82,12 @@
             function initApp() {
                 firebase.auth().onAuthStateChanged(function(user) {
                     if (user) {
-                        var isAnonymous = user.isAnonymous;
-                        var uid = user.uid;
+                        internalName = user.uid;
+                        var nameXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + internalName + "&q=name", true);
+                        nationName = nameXML.getElementsByTagName("").item(0);
                         
-                        elections.innerHTML = '<h1>2. Vote</h1>';
-                        elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
+                        elections.innerHTML = '<h1>Vote</h1>';
+                        elections.innerHTML += '<p class="lead">Vote on these elections, ' + internalName + '.</p>';
                         elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">Akohos <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
                         if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                             elections.innerHTML += '<hr>';
@@ -116,11 +117,7 @@
                     denyCode();
                     invalid = true;
                 } else {
-                    var url = "https://www.nationstates.net/cgi-bin/api.cgi?a=verify&nation=" + nationName + "&checksum=" + verificationCode;
-                    var request = new XMLHttpRequest();
-                    request.open("GET", url, false);
-                    request.send();
-                    var response = request.responseText;
+                    var response = request("https://www.nationstates.net/cgi-bin/api.cgi?a=verify&nation=" + nationName + "&checksum=" + verificationCode, false);
                     if (response != 1) {
                         denyCode();
                         invalid = true;
@@ -170,6 +167,17 @@
             
             function add() {
                 
+            }
+            
+            function request(url, xml) {
+                var request = new XMLHttpRequest();
+                request.open("GET", url, false);
+                request.send();
+                if (xml) {
+                    return request.responseXML;
+                } else {
+                    return request.responseText;
+                }
             }
             
             function loginembed() {
