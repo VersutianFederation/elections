@@ -190,7 +190,7 @@
             function updateElectionsData(data) {
                 var elections = document.getElementById('elections');
                 elections.innerHTML += '<div class="card card-block"><h4 class="card-title">' + data.val().election + '</h4><div id="inner-vote">'
-                firebase.database.ref('/elections/' + data.key + '/options').once('value').then(function(snapshot) {
+                firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function(snapshot) {
                     snapshot.forEach(function(candidate) {
                         elections.innerHTML += '<button class="btn btn-secondary" onclick="vote()">' + candidate.key + '</button>';
                     });
