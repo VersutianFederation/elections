@@ -63,7 +63,8 @@
                         internalName = user.uid;
                         var nameXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + internalName + "&q=name", true);
                         nationName = nameXML.getElementsByTagName("NAME").item(0).textContent;
-                        var elections = firebase.database().ref('elections/');
+                        var electionsData = firebase.database().ref('elections/');
+                        var elections = document.getElementById('elections');
                         
                         elections.innerHTML = '<h1>Vote</h1>';
                         elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p><button class="btn" onclick="signOut()">sign out</button><br><br>';
@@ -74,6 +75,7 @@
                             elections.innerHTML += '<form><div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
                         }
                     } else {
+                        var elections = document.getElementById('elections');
                         elections.innerHTML = '<h1>Login with NationStates</h1>';
                         elections.innerHTML += '<div id="alert"></div>';
                         elections.innerHTML += '<form>';
