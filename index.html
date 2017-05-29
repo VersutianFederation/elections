@@ -196,7 +196,9 @@
                     snapshot.forEach(function(candidate) {
                         elections.innerHTML += '<button class="btn btn-secondary" id="' + data.key + '-' + candidate.key + '">' + candidate.key + ' - ' + candidate.numChildren() + '</button>';
                         var button = document.getElementById(data.key + '-' + candidate.key);
+                        console.log(button.onclick);
                         button.onclick = function () { firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true); };
+                        console.log(button.onclick);
                     });
                     elections.innerHTML += '<hr>'
                 });
