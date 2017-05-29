@@ -65,16 +65,12 @@
                         nationName = nameXML.getElementsByTagName("NAME").item(0).textContent;
                         var electionsData = firebase.database().ref('elections/');
                         electionsData.on('value', function(snapshot) {
+                            clearElections();
                             snapshot.forEach(function(childSnapshot) {
-                                clearElections();
                                 updateElectionsData(childSnapshot.val());
                             });
                         });
                         var elections = document.getElementById('elections');
-                        
-                        elections.innerHTML = '<h1>Vote</h1>';
-                        elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p><button class="btn" onclick="signOut()">sign out</button><br><br>';
-                        
                         if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                             elections.innerHTML += '<hr>';
                             elections.innerHTML += '<h2>Create new election</h2>';
@@ -198,6 +194,11 @@
                     elections.innerHTML += '<button class="btn btn-secondary" onclick="vote()">' + candidate.key + '</button>';
                 })
                 elections.innerHTML += '</div></div>';
+            }
+            
+            function clearElections() {
+                elections.innerHTML = '<h1>Vote</h1>';
+                elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p><button class="btn" onclick="signOut()">sign out</button><br><br>';
             }
             
             function request(url, xml) {
