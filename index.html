@@ -195,9 +195,9 @@
                     elections.innerHTML += '<h3>' + data.val().election + '</h3>';
                     snapshot.forEach(function(candidate) {
                         elections.innerHTML += '<button class="btn btn-secondary" id="' + data.key + '-' + candidate.key + '">' + candidate.key + ' - ' + candidate.numChildren() + '</button>';
-                        document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function() {
-                           firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
-                        }, false);
+                        var button = document.getElementById(data.key + '-' + candidate.key);
+                        console.log(button.textContent);
+                        button.addEventListener('click', function() {firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true)}, false);
                     });
                     elections.innerHTML += '<hr>'
                 });
