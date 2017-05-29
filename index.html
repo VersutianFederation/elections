@@ -192,13 +192,14 @@
             function updateElectionsData(data) {
                 firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function(snapshot) {
                     var elections = document.getElementById('elections');
-                    elections.innerHTML += '<hr><h3>' + data.val().election + '</h3>';
+                    var element = document.createElement('div');
+                    elections.appendChild(element);
+                    element.innerHTML = '<hr><h3>' + data.val().election + '</h3>';
                     snapshot.forEach(function(candidate) {
                         var element = document.createElement('div');
                         elections.appendChild(element);
                         element.innerHTML = '<button class="btn btn-secondary" id="' + data.key + '-' + candidate.key + '">' + candidate.key + ' - ' + (candidate.numChildren() - 1) + '</button>';
                         document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function() {
-                            console.log('test');
                             firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
                         }, false);
                     });
