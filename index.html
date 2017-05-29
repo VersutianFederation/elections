@@ -17,35 +17,7 @@
             </div>
         </header>
         
-        <section id="elections" class="container">
-            <h1>Login with NationStates</h1>
-            <div id="alert"></div>
-            <form>
-                <div class="form-group" id="nation-name-group">
-                    <input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name">
-                    <div id="nation-name-feedback"></div>
-                    <p id="nationHelpBlock" class="form-text text-muted">
-                        Your nation's short name, as it is displayed on NationStates, for example, <b>Akohos</b>.
-                    </p>
-                </div>
-            </form>
-            <br>
-            <iframe src="https://embed.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%" id="ns-embed"></iframe>
-            <div id="embed-text"><p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn">login first.</button></p></div>
-            <br>
-            <form>
-                <div class="form-group" id="verification-code-group">
-                    <input type="text" class="form-control" id="verification-code" aria-describedby="codeHelpBlock" placeholder="Code">
-                    <div id="verification-code-feedback"></div>
-                    <p id="codeHelpBlock" class="form-text text-muted">
-                        Copy the code you see from the NationStates.net page into this box.
-                    </p>
-                </div>
-            </form>
-            <br>
-            <button class="btn btn-primary" onclick="verify()">Login</button>
-            <br><br>
-        </section>
+        <section id="elections" class="container"></section>
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js" integrity="sha256-jJlsVPlSwQyGokYi0JgmrFRihc7ILE3Id8AB0dpr0JA=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
@@ -87,16 +59,44 @@
                         nationName = nameXML.getElementsByTagName("NAME").item(0).textContent;
                         
                         elections.innerHTML = '<h1>Vote</h1>';
-                        elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
+                        elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p><button class="btn" onclick="signOut()>sign out</button>';
                         elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">Akohos <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
                         if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                             elections.innerHTML += '<hr>';
                             elections.innerHTML += '<h2>Create new election</h2>';
                             elections.innerHTML += '<form><div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
                         }
+                    } else {
+                        elections.innerHTML = '<h1>Login with NationStates</h1>';
+                        elections.innerHTML += '<div id="alert"></div>';
+                        elections.innerHTML += '<form>';
+                        elections.innerHTML += '<div class="form-group" id="nation-name-group">';
+                        elections.innerHTML += '<input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name">';
+                        elections.innerHTML += '<div id="nation-name-feedback"></div>';
+                        elections.innerHTML += '<p id="nationHelpBlock" class="form-text text-muted">';
+                        elections.innerHTML += 'Your nation\'s short name, as it is displayed on NationStates, for example, <b>Akohos</b>.';
+                        elections.innerHTML += '</p>';
+                        elections.innerHTML += '</div>';
+                        elections.innerHTML += '</form>';
+                        elections.innerHTML += '<br>';
+                        elections.innerHTML += '<iframe src="https://embed.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%" id="ns-embed"></iframe>';
+                        elections.innerHTML += '<div id="embed-text"><p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn">login first.</button></p></div>';
+                        elections.innerHTML += '<br>';
+                        elections.innerHTML += '<form>';
+                        elections.innerHTML += '<div class="form-group" id="verification-code-group">';
+                        elections.innerHTML += '<input type="text" class="form-control" id="verification-code" aria-describedby="codeHelpBlock" placeholder="Code">';
+                        elections.innerHTML += '<div id="verification-code-feedback"></div>';
+                        elections.innerHTML += '<p id="codeHelpBlock" class="form-text text-muted">';
+                        elections.innerHTML += 'Copy the code you see from the NationStates.net page into this box.';
+                        elections.innerHTML += '</p>';
+                        elections.innerHTML += '</div>';
+                        elections.innerHTML += '</form>';
+                        elections.innerHTML += '<br>';
+                        elections.innerHTML += '<button class="btn btn-primary" onclick="verify()">Login</button>';
+                        elections.innerHTML += '<br><br>';
+                        document.getElementById('embed-switch').addEventListener('click', loginembed, false);
                     }
                 });
-                document.getElementById('embed-switch').addEventListener('click', loginembed, false);
             }
             
             function verify() {
@@ -202,6 +202,10 @@
                 innerVote.innerHTML += '<progress class="progress" value="100" max="100"></progress>';
                 innerVote.innerHTML += '<div class="text-xs-center"><b>Opponent</b> 0%</div>';
                 innerVote.innerHTML += '<progress class="progress" value="0" max="100"></progress>';
+            }
+            
+            function signOut() {
+                firebase.auth().signOut();
             }
             
             window.onload = function() {
