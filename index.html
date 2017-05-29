@@ -63,6 +63,7 @@
                         internalName = user.uid;
                         var nameXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + internalName + "&q=name", true);
                         nationName = nameXML.getElementsByTagName("NAME").item(0).textContent;
+                        var elections = firebase.database().ref('elections/');
                         
                         elections.innerHTML = '<h1>Vote</h1>';
                         elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p><button class="btn" onclick="signOut()">sign out</button><br><br>';
@@ -172,7 +173,20 @@
             }
             
             function add() {
+                var electionData = {
+                    election: name,
+                    options: {
+                        akohos: {
+                            humantus: true
+                        },
+                        opponent: {
+                            other_voter: true
+                        }
+                    }
+                };
                 
+                var electionId = firebase.database().ref().child('elections').push().key;
+                firebase.database().ref('elections/' + electionId).set(electionData);
             }
             
             function request(url, xml) {
@@ -202,6 +216,7 @@
             }
             
             function vote() {
+                
                 var innerVote = document.getElementById('inner-vote');
                 innerVote.innerHTML = '<p class="card-text">Thank you for voting!</p>';
                 innerVote.innerHTML += '<div class="text-xs-center"><b>Akohos</b> 100%</div>';
