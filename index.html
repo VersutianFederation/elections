@@ -64,11 +64,17 @@
                         var nameXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + internalName + "&q=name", true);
                         nationName = nameXML.getElementsByTagName("NAME").item(0).textContent;
                         var electionsData = firebase.database().ref('elections/');
+                        electionsData.on('value', function(snapshot) {
+                            snapshot.forEach(function(childSnapshot) {
+                                clearElections();
+                                updateElectionsData(childSnapshot.val());
+                            });
+                        });
                         var elections = document.getElementById('elections');
                         
                         elections.innerHTML = '<h1>Vote</h1>';
                         elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p><button class="btn" onclick="signOut()">sign out</button><br><br>';
-                        elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">Akohos <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
+                        
                         if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                             elections.innerHTML += '<hr>';
                             elections.innerHTML += '<h2>Create new election</h2>';
@@ -152,13 +158,7 @@
                 var sPayload = JSON.stringify(oPayload);
                 var token = KJUR.jws.JWS.sign(null, sHeader, sPayload, sPKCS8PEM, 'notasecret');
                 firebase.auth().signInWithCustomToken(token).catch(function(error) {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    if (errorCode === 'auth/invalid-custom-token') {
-                      alert('Invalid token.');
-                    } else {
-                      console.error(error);
-                    }
+                    console.error(error);
                 });
                 var elections = document.getElementById('elections');
                 if (officials.indexOf(internalName) != -1) {
@@ -174,9 +174,9 @@
                 document.getElementById('verification-code-feedback').innerHTML = '<div class="form-control-feedback">Your verification code was not approved. Generate a new code.</div>';
             }
             
-            function add() {
+            function addTest() {
                 var electionData = {
-                    election: name,
+                    election: "Delegate",
                     options: {
                         akohos: {
                             humantus: true
@@ -189,6 +189,15 @@
                 
                 var electionId = firebase.database().ref().child('elections').push().key;
                 firebase.database().ref('elections/' + electionId).set(electionData);
+            }
+            
+            function updateElectionsData(data) {
+                var elections = document.getElementById('elections');
+                elections.innerHTML += '<div class="card card-block"><h4 class="card-title">' + data.election + '</h4><div id="inner-vote">'
+                data.options.forEach(function(candidate) {
+                    elections.innerHTML += '<button class="btn btn-secondary" onclick="vote()">' + candidate.key + '</button>';
+                })
+                elections.innerHTML += '</div></div>';
             }
             
             function request(url, xml) {
@@ -210,7 +219,6 @@
             }
             
             function verifyembed() {
-                
                 document.getElementById('ns-embed').src = "https://embed.nationstates.net/page=verify_login#proof_of_login_checksum";
                 document.getElementById('embed-switch').removeEventListener('click', verifyembed, false);
                 document.getElementById('embed-text').innerHTML = '<p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn">login first.</button></p>';
@@ -218,7 +226,6 @@
             }
             
             function vote() {
-                
                 var innerVote = document.getElementById('inner-vote');
                 innerVote.innerHTML = '<p class="card-text">Thank you for voting!</p>';
                 innerVote.innerHTML += '<div class="text-xs-center"><b>Akohos</b> 100%</div>';
