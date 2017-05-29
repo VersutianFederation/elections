@@ -4,8 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>TVF Elections</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha256-mIfhv/h3MLq3WSiSlduuZO3saRNzzuf1LK8w3z3l3JY=" crossorigin="anonymous" />
+        <title>Versutian Elections</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha256-rr9hHBQ43H7HSOmmNkxzQGazS/Khx+L8ZRHteEY1tQ4=" crossorigin="anonymous" />
     </head>
     <body>
         <header class="jumbotron jumbotron-fluid">
@@ -25,13 +25,13 @@
                     <input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name">
                     <div id="nation-name-feedback"></div>
                     <p id="nationHelpBlock" class="form-text text-muted">
-                        Your nation's short name, as it is displayed on NationStates, for example, Akohos.
+                        Your nation's short name, as it is displayed on NationStates, for example, <b>Akohos</b>.
                     </p>
                 </div>
             </form>
             <br>
-            <iframe src="https://embed.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%"></iframe>
-            <p>If there is an error, please login to NationStates.net on a separate page.</p>
+            <iframe src="https://embed.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%" id="ns-embed"></iframe>
+            <div id="embed-text"><p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn">login first.</button></p></div>
             <br>
             <form>
                 <div class="form-group" id="verification-code-group">
@@ -47,13 +47,57 @@
             <br><br>
         </section>
         
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js" integrity="sha256-jJlsVPlSwQyGokYi0JgmrFRihc7ILE3Id8AB0dpr0JA=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase-database.js"></script>
+        <script src="http://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha256-gL1ibrbVcRIHKlCO5OXOPC/lZz/gpdApgQAzskqqXp8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha256-+kIbbrvS+0dNOjhmQJzmwe/RILR/8lb/+4+PUNVW09k=" crossorigin="anonymous"></script>
         <script>
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyDUCZPMORvRZ1_ZWMlLMpEi5q9PQIAaT4o",
+                authDomain: "versutian.firebaseapp.com",
+                databaseURL: "https://versutian.firebaseio.com",
+                projectId: "versutian",
+                storageBucket: "versutian.appspot.com",
+                messagingSenderId: "158551980529"
+            };
+            firebase.initializeApp(config);
             var nationName;
             var internalName;
             var verificationCode;
             var accessLevel = "CITIZEN";
             var officials = ["north_arkana", "asairia", "akohos"];
             var protectors = ["alamei"];
+            var sub = 'versutian@appspot.gserviceaccount.com';
+            var sPKCS8PEM = '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC9BUKL5OmnfAi6\n2TqOInGOCJ6aq44jC4503Y+NspbEkYF50PuzgtDNA356ZE987iKWoAOpLbRu9emG\nfeThjc+5CgTbJ0H8LPAfNb8uWBRd1JQm4X7nz5q9dDPkFt2+bG7Fxx6szaMKpRlN\n3w0ydk+7RIb+viizqym/XinTnW5KiDMPLbur+L1nlswYdTW445y16rbp4nTHKDGN\nYgqe72LdU0i5G80T2ZLS2zgpDD9myp0YU3k3MdtYthi7w7BnkBwAoB/zdg1NNi7y\ndXhQ684vSxRk972y+yyTzs42LOkzE0OIAc9/qnS8Kdgx0uhfnQirlO1Y3Qs+7Mo1\nUnQYggYtAgMBAAECggEAGeg7Jz5wUf7bmXSFpI6O/tcqmetyl1YRp+3oK5UzOezx\nkJc2sHN5F+hnMPJHvMlM31U+OzVi+iRlZgQiV1HfCy8W3EzErAIixTxSIFF9NSEa\nTzvv72jSfi4LoLMLoHpvMldo2mly89YOIlC0l9qEchfh4s+Ad6O5nJuU4wa8Y6WL\nkHQLzCS/mb38IlBL+jR4BfltFBCowWSDcXeTAn5rwStfSL/fJLNzIFvk77SdIh6Q\n4f3QAkTNYKQ0xGW2D12xlu9e9hzXLzwQWFHfigxbLSYYliCifjQVPXHPODwMZtsw\nKcFQc+wNfv7ECOagVY/+gnwcw+/yAcvI0GtvpZgihwKBgQD4MsxI6r4PbCwwWL8p\nrhFKXvMVftlXsjL1N0/EAE2QK3tOq0jgZ4iGnX0E3nTnyQxM4JIdOd/QxTU/jBLD\nHNpxzPk6mPDgdWlvn6Jod2BrGc4Dv/QaAIX+IMyYtz4fz6OfhehKDMQSihMZ0s/h\nuBy7qyY3MJ1a81XkihuBu0ehmwKBgQDC9kUG2VMVMdH7HXpGSByvfj3WpFBExDXO\nioK5BCLn8/lWUZ7jBhpN65wX+K5f7naty6Kxh5B+nW7hv1+wdOkjCZn9CZYU1Ga3\nMKznlOt3yfhrgpDaUlqiq8Ac9MlKjXE8cPqiwRMsZptLrtXY1dxwU+7/HY4qI7ld\nVXrcKXM31wKBgQCwhdh7J9FjQKkw/X2AVFfh0CQNLrm/wHKzqtIlcZ24ouRBMFtV\nlu0n6Myo8Nqum3QPHU1uUeIYJppXhvU1JclLVOARSANRcNA7Xorwx66gnarDSft/\nns2tz4AUQYeCsngKFf/+4pN1KBSrsh69x+dPpks4x2+y5ww4ze0AWMV6bwKBgGZk\nFl6Bdpvz/VbH5XbR2pbkUy/OPgXPkn61ye/HV1nAjVujJDIQ+3Ge4uzIAzSItbWS\n9BAOpXmJzzkqW+P9ko9/NGtrRHIOFx/wpW4+jOftn9U+zjqK8+TpFM1gVfMck7Lt\nlwQxKJOyE69M1Cy8LLilrCg56ncBKhH1mb/U2RkjAoGBALgBnHMIzhNQHJJcPEPk\nuLVnF+w3rFMH1m/JEngsxYp96BNLNcAoD/vA+Ie57+0ArGmAyQ5rs7jZAFiC5/pc\nB3wojXWg86UzK1h/EvthXYPqH+ukw0aoDuwiXBIIphxP5UOSnwHOFp/MWQyYNLLq\n1fs92SrrtEqiYhDSkAUCZxwb\n-----END PRIVATE KEY-----\n';
+            var kid = '71485c8500b96d3a3ba4c46fdce05bc81ed0b55f';
+            var token;
+            var verifyurl;
+
+            function initApp() {
+                firebase.auth().onAuthStateChanged(function(user) {
+                    if (user) {
+                        var isAnonymous = user.isAnonymous;
+                        var uid = user.uid;
+                        
+                        elections.innerHTML = '<h1>2. Vote</h1>';
+                        elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
+                        elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">Akohos <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
+                        if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
+                            elections.innerHTML += '<hr>';
+                            elections.innerHTML += '<h2>Create new election</h2>';
+                            elections.innerHTML += '<form><div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
+                        }
+                    }
+                });
+                document.getElementById('embed-switch').addEventListener('click', loginembed, false);
+            }
+            
             function verify() {
                 document.getElementById('nation-name-feedback').innerHTML = '';
                 document.getElementById('nation-name-group').classList.remove('has-warning');
@@ -68,7 +112,6 @@
                     document.getElementById('nation-name-feedback').innerHTML = '<div class="form-control-feedback">Something\'s not right about that nation name.</div>';
                     invalid = true;
                 }
-                // TODO: verify code is valid
                 if (verificationCode == null || verificationCode == "") {
                     denyCode();
                     invalid = true;
@@ -78,7 +121,6 @@
                     request.open("GET", url, false);
                     request.send();
                     var response = request.responseText;
-                    console.log(response);
                     if (response != 1) {
                         denyCode();
                         invalid = true;
@@ -89,29 +131,60 @@
                 if (invalid) {
                     return;
                 }
+                var oHeader = {alg: 'RS256', kid: kid, typ: 'JWT'};
+                var oPayload = {};
+                var tNow = KJUR.jws.IntDate.get('now');
+                var tEnd = KJUR.jws.IntDate.get('now + 1hour');
+                oPayload.aud = 'https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit';
+                oPayload.exp = tEnd;
+                oPayload.iat = tNow;
+                oPayload.iss = sub;
+                oPayload.sub = sub;
+                oPayload.user_id = internalName;
+                oPayload.scope = 'https://www.googleapis.com/auth/identitytoolkit';
+                var sHeader = JSON.stringify(oHeader);
+                var sPayload = JSON.stringify(oPayload);
+                var token = KJUR.jws.JWS.sign(null, sHeader, sPayload, sPKCS8PEM, 'notasecret');
+                firebase.auth().signInWithCustomToken(token).catch(function(error) {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    if (errorCode === 'auth/invalid-custom-token') {
+                      alert('Invalid token.');
+                    } else {
+                      console.error(error);
+                    }
+                });
                 var elections = document.getElementById('elections');
                 if (officials.indexOf(internalName) != -1) {
                     accessLevel = "OFFICIAL";
                 } else if (protectors.indexOf(internalName) != -1) {
                     accessLevel = "PROTECTOR";
                 }
-                elections.innerHTML = '<h1>2. Vote</h1>';
-                elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
-                elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">Akohos <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
-                if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
-                    elections.innerHTML += '<hr>';
-                    elections.innerHTML += '<h2>Create new election</h2>';
-                    elections.innerHTML += '<form><div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
-                }
+                
             }
             
             function denyCode() {
                 document.getElementById('verification-code-group').classList.add('has-warning');
-                document.getElementById('verification-code-feedback').innerHTML = '<div class="form-control-feedback">Your verification code was not approved. Try getting a new code.</div>';
+                document.getElementById('verification-code-feedback').innerHTML = '<div class="form-control-feedback">Your verification code was not approved. Generate a new code.</div>';
             }
             
             function add() {
                 
+            }
+            
+            function loginembed() {
+                document.getElementById('ns-embed').src = "https://nationstates.net/page=login";
+                document.getElementById('embed-switch').removeEventListener('click', loginembed, false);
+                document.getElementById('embed-text').innerHTML = '<p>Once you have logged in, <button id="embed-switch" class="btn">verify your nation.</button></p>';
+                document.getElementById('embed-switch').addEventListener('click', verifyembed, false);
+            }
+            
+            function verifyembed() {
+                
+                document.getElementById('ns-embed').src = "https://embed.nationstates.net/page=verify_login#proof_of_login_checksum";
+                document.getElementById('embed-switch').removeEventListener('click', verifyembed, false);
+                document.getElementById('embed-text').innerHTML = '<p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn">login first.</button></p>';
+                document.getElementById('embed-switch').addEventListener('click', loginembed, false);
             }
             
             function vote() {
@@ -122,10 +195,10 @@
                 innerVote.innerHTML += '<div class="text-xs-center"><b>Opponent</b> 0%</div>';
                 innerVote.innerHTML += '<progress class="progress" value="0" max="100"></progress>';
             }
+            
+            window.onload = function() {
+                initApp();
+            }
         </script>
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha256-/5pHDZh2fv1eZImyfiThtB5Ag4LqDjyittT7fLjdT/8=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha256-j+XrvkQ4jJ99Hj0pJKPr6k0RCgxDDSTs3PBqLrX2EMc=" crossorigin="anonymous"></script>
     </body>
 </html>
