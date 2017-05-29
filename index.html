@@ -197,6 +197,7 @@
                         var elections = document.getElementById('elections');
                         elections.innerHTML += '<button class="btn btn-secondary" id="' + candidate.key + '">' + candidate.key + ' - ' + candidate.numChildren() + '</button>';
                         document.getElementById(candidate.key).addEventListener('click', function() {
+                            console.log('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName);
                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
                         }, false);
                     });
