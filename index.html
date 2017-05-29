@@ -87,7 +87,7 @@
                         nationName = nameXML.getElementsByTagName("").item(0);
                         
                         elections.innerHTML = '<h1>Vote</h1>';
-                        elections.innerHTML += '<p class="lead">Vote on these elections, ' + internalName + '.</p>';
+                        elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p>';
                         elections.innerHTML += '<div class="card card-block"><h4 class="card-title">Delegate</h4><div id="inner-vote"><button class="btn btn-secondary" onclick="vote()">Akohos <small>Incumbent</small></button><button class="btn btn-secondary" onclick="vote()">Opponent</button></div></div>';
                         if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                             elections.innerHTML += '<hr>';
