@@ -190,16 +190,16 @@
             */
             
             function updateElectionsData(data) {
-                
                 firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function(snapshot) {
                     var elections = document.getElementById('elections');
-                    elections.innerHTML += '<h3>' + data.val().election + '</h3>';
+                    elections.innerHTML += '<div class="card card-block"><h4 class="card-title">' + data.val().election + '</h4>';
                     snapshot.forEach(function(candidate) {
                         elections.innerHTML += '<button class="btn btn-secondary" id="' + candidate.key + '">' + candidate.key + ' - ' + candidate.numChildren() + '</button>';
                         document.getElementById(candidate.key).addEventListener('click', function() {
                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
                         }, false);
                     });
+                    elections.innerHTML += '</div><hr>'
                 });
             }
             
