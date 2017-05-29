@@ -170,6 +170,7 @@
                 document.getElementById('verification-code-feedback').innerHTML = '<div class="form-control-feedback">Your verification code was not approved. Generate a new code.</div>';
             }
             
+            /*
             function addTest() {
                 var electionData = {
                     election: "Delegate",
@@ -186,16 +187,17 @@
                 var electionId = firebase.database().ref().child('elections').push().key;
                 firebase.database().ref('elections/' + electionId).set(electionData);
             }
+            */
             
             function updateElectionsData(data) {
                 var elections = document.getElementById('elections');
-                elections.innerHTML += '<div class="card card-block"><h4 class="card-title">' + data.val().election + '</h4><div id="inner-vote">'
+                elections.innerHTML += '<h3>' + data.val().election + '</h3>';
                 firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function(snapshot) {
                     snapshot.forEach(function(candidate) {
                         elections.innerHTML += '<button class="btn btn-secondary" onclick="vote()">' + candidate.key + '</button>';
                     });
                 });
-                elections.innerHTML += '</div></div>';
+                elections.innerHTML += '<hr>';
             }
             
             function clearElections() {
@@ -229,12 +231,14 @@
             }
             
             function vote() {
+                /*
                 var innerVote = document.getElementById('inner-vote');
                 innerVote.innerHTML = '<p class="card-text">Thank you for voting!</p>';
                 innerVote.innerHTML += '<div class="text-xs-center"><b>Akohos</b> 100%</div>';
                 innerVote.innerHTML += '<progress class="progress" value="100" max="100"></progress>';
                 innerVote.innerHTML += '<div class="text-xs-center"><b>Opponent</b> 0%</div>';
                 innerVote.innerHTML += '<progress class="progress" value="0" max="100"></progress>';
+                */
             }
             
             function signOut() {
