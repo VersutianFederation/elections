@@ -152,7 +152,7 @@ function updateElectionsData(data) {
                     });
                     electionInner.appendChild(card);
                     var img = document.createElement('img');
-                    img.setAttribute('class', 'card-img-top img-fluid');
+                    img.setAttribute('class', 'card-img-top');
                     var candidateXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + candidate.key + "&q=flag+name", true);
                     var flagSrc = candidateXML.getElementsByTagName("FLAG").item(0).textContent;
                     img.setAttribute('src', flagSrc);
