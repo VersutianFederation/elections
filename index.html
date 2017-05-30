@@ -209,42 +209,60 @@
                     var electionSection = document.createElement('div');
                     electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
                     elections.appendChild(electionSection);
-                    var electionInner = document.createElement('div')
-                    electionInner.classList.add('card-columns');
-                    electionSection.appendChild(electionInner);
                     //var pieChart = document.createElement('div');
                     //pieChart.setAttribute('id', 'pie-' + data.key);
-                    
-                    snapshot.forEach(function(candidate) {
-                        var card = document.createElement('div');
-                        card.setAttribute('id', data.key + '-' + candidate.key);
-                        card.classList.add('card');
-                        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function(snapshot) {
-                            if (snapshot.val()) {
-                                card.classList.add('card-inverse');
-                            }
-                        });
-                        electionInner.appendChild(card);
-                        var img = document.createElement('img');
-                        img.setAttribute('style', 'card-img-top img-fluid');
-                        var candidateXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + candidate.key + "&q=flag+name", true);
-                        var flagSrc = candidateXML.getElementsByTagName("FLAG").item(0).textContent;
-                        img.setAttribute('src', flagSrc);
-                        card.appendChild(img);
-                        var cardBlock = document.createElement('div');
-                        cardBlock.classList.add('card-block');
-                        card.appendChild(cardBlock);
-                        var candidateName = candidateXML.getElementsByTagName("NAME").item(0).textContent;
-                        cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
-                        document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function() {
-                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
-                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true)
-                        }, false);
+                    firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value').then(function(voted) {
+                        var votedCounter = voted.numChildren();
+                        if (votedCounter === data.val().votes) { // if the person voted,
+                            var youVoted = document.createElement('p');
+                            youVoted.innerHTML = 'You voted for ';
+                            voted.forEach(function(candidate) {
+                                votedCounter--;
+                                if (votedCounter === 0) {
+                                    youVoted.innerHTML += candidate.key + '.';
+                                } else if (votedCounter === 1) {
+                                    youVoted.innerHTML += candidate.key + 'and ';
+                                } else {
+                                    youVoted.innerHTML += candidate + ', ';
+                                }
+                            });
+                            electionSection.appendChild(youVoted);
+                        } else { // if they still need to vote
+                            var electionInner = document.createElement('div')
+                            electionInner.classList.add('card-columns');
+                            electionSection.appendChild(electionInner);
+                            snapshot.forEach(function(candidate) {
+                                var card = document.createElement('div');
+                                card.setAttribute('id', data.key + '-' + candidate.key);
+                                card.classList.add('card');
+                                firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function(snapshot) {
+                                    if (snapshot.val()) {
+                                        card.classList.add('card-inverse');
+                                    }
+                                });
+                                electionInner.appendChild(card);
+                                var img = document.createElement('img');
+                                img.setAttribute('class', 'card-img-top img-fluid');
+                                var candidateXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + candidate.key + "&q=flag+name", true);
+                                var flagSrc = candidateXML.getElementsByTagName("FLAG").item(0).textContent;
+                                img.setAttribute('src', flagSrc);
+                                card.appendChild(img);
+                                var cardBlock = document.createElement('div');
+                                cardBlock.classList.add('card-block');
+                                card.appendChild(cardBlock);
+                                var candidateName = candidateXML.getElementsByTagName("NAME").item(0).textContent;
+                                cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
+                                document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function() {
+                                    firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
+                                    firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true)
+                                }, false);
+                            });
+                            var element = document.createElement('br');
+                            electionSection.appendChild(element);
+                            var element = document.createElement('br');
+                            electionSection.appendChild(element);
+                        }
                     });
-                    var element = document.createElement('br');
-                    electionSection.appendChild(element);
-                    var element = document.createElement('br');
-                    electionSection.appendChild(element);
                 });
             }
             
