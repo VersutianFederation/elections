@@ -192,17 +192,23 @@
             function updateElectionsData(data) {
                 firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function(snapshot) {
                     var elections = document.getElementById('elections');
-                    var element = document.createElement('div');
-                    elections.appendChild(element);
-                    element.innerHTML = '<hr><h3>' + data.val().election + '</h3>';
+                    var electionSection = document.createElement('div');
+                    elections.appendChild(electionSection);
+                    electionSection.innerHTML = '<hr><h3>' + data.val().election + '</h3>';
                     snapshot.forEach(function(candidate) {
-                        var element = document.createElement('div');
+                        var element = document.createElement('button');
+                        element.setAttribute('id', data.key + '-' + candidate.key);
+                        element.setAttribute('class', 'btn btn-secondary');
+                        element.innerHTML = candidate.key + ' - ' + (candidate.numChildren() - 1);
                         elections.appendChild(element);
-                        element.innerHTML = '<button class="btn btn-secondary" id="' + data.key + '-' + candidate.key + '">' + candidate.key + ' - ' + (candidate.numChildren() - 1) + '</button>';
                         document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function() {
                             firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
                         }, false);
                     });
+                    var element = document.createElement('br');
+                    elections.appendChild(element);
+                    var element = document.createElement('br');
+                    elections.appendChild(element);
                 });
             }
             
