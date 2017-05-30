@@ -61,7 +61,7 @@ function verify() {
     } else {
         document.getElementById('login-form').innerHTML += '<div id="spinner" class="text-center"><span class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></span><span class="sr-only">Loading...</span></div>';
         var response = request("https://www.nationstates.net/cgi-bin/api.cgi?a=verify&nation=" + nationName + "&checksum=" + verificationCode, false);
-        if (response !== 1) {
+        if (response != 1) {
             denyCode();
             return;
         }
