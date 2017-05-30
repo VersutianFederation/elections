@@ -146,9 +146,13 @@ function updateElectionsData(data) {
                     card.setAttribute('id', data.key + '-' + candidate.key);
                     card.classList.add('card');
                     card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8))';
+                    card.style.backgroundSize = 'cover';
+                    card.style.backgroundPosition = 'center';
+                    card.style.backgroundRepeat = 'no-repeat';
                     firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function (snapshot) {
                         if (snapshot.val()) {
                             card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8))';
+                            card.style.color = '#fff';
                         }
                     });
                     electionInner.appendChild(card);
