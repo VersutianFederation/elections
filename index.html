@@ -199,9 +199,11 @@
                 firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function(snapshot) {
                     var elections = document.getElementById('elections');
                     var electionSection = document.createElement('div');
-                    electionSection.classList.add('card-columns');
-                    elections.appendChild(electionSection);
                     electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
+                    elections.appendChild(electionSection);
+                    var electionInner = document.createElement('div')
+                    electionInner.classList.add('card-columns');
+                    electionSection.appendChild(electionInner);
                     //var pieChart = document.createElement('div');
                     //pieChart.setAttribute('id', 'pie-' + data.key);
                     
@@ -214,7 +216,7 @@
                                 card.classList.add('card-inverse');
                             }
                         });
-                        electionSection.appendChild(card);
+                        electionInner.appendChild(card);
                         var img = document.createElement('img');
                         card.classList.add('card-img-top');
                         var candidateXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + candidate.key + "&q=flag+name", true);
