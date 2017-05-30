@@ -5,8 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title>Versutian Elections</title>
+        <link rel="icon" type="image/png" href="versutian.png" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha256-rr9hHBQ43H7HSOmmNkxzQGazS/Khx+L8ZRHteEY1tQ4=" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+        <style>
+            .card:hover {
+                background-color: #ededed;
+            }
+        </style>
     </head>
     <body>
         <header class="jumbotron jumbotron-fluid">
@@ -91,7 +97,7 @@
                         elections.innerHTML += '</form>';
                         elections.innerHTML += '<br>';
                         elections.innerHTML += '<iframe src="https://embed.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%" id="ns-embed"></iframe>';
-                        elections.innerHTML += '<div id="embed-text"><p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn">login first.</button></p></div>';
+                        elections.innerHTML += '<div id="embed-text"><p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn btn-secondary">login first.</button></p></div>';
                         elections.innerHTML += '<br>';
                         elections.innerHTML += '<form>';
                         elections.innerHTML += '<div class="form-group" id="verification-code-group">';
@@ -193,28 +199,48 @@
                 firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function(snapshot) {
                     var elections = document.getElementById('elections');
                     var electionSection = document.createElement('div');
+                    electionSection.classList.add('card-columns');
                     elections.appendChild(electionSection);
-                    electionSection.innerHTML = '<hr><h3>' + data.val().election + '</h3>';
+                    electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
+                    //var pieChart = document.createElement('div');
+                    //pieChart.setAttribute('id', 'pie-' + data.key);
+                    
                     snapshot.forEach(function(candidate) {
-                        var element = document.createElement('button');
-                        element.setAttribute('id', data.key + '-' + candidate.key);
-                        element.setAttribute('class', 'btn btn-secondary');
-                        element.innerHTML = candidate.key + ' - ' + (candidate.numChildren() - 1);
-                        elections.appendChild(element);
+                        var card = document.createElement('div');
+                        card.setAttribute('id', data.key + '-' + candidate.key);
+                        card.classList.add('card');
+                        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function(snapshot) {
+                            if (snapshot.val()) {
+                                card.classList.add('card-inverse');
+                            }
+                        });
+                        electionSection.appendChild(card);
+                        var img = document.createElement('img');
+                        card.classList.add('card-img-top');
+                        var candidateXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + candidate.key + "&q=flag+name", true);
+                        var flagSrc = candidateXML.getElementsByTagName("FLAG").item(0).textContent;
+                        img.setAttribute('src', flagSrc);
+                        card.appendChild(img);
+                        var cardBlock = document.createElement('div');
+                        cardBlock.classList.add('card-block');
+                        card.appendChild(cardBlock);
+                        var candidateName = candidateXML.getElementsByTagName("NAME").item(0).textContent;
+                        cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
                         document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function() {
                             firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
+                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true)
                         }, false);
                     });
                     var element = document.createElement('br');
-                    elections.appendChild(element);
+                    electionSection.appendChild(element);
                     var element = document.createElement('br');
-                    elections.appendChild(element);
+                    electionSection.appendChild(element);
                 });
             }
             
             function clearElections() {
                 elections.innerHTML = '<h1>Vote</h1>';
-                elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p><button class="btn" onclick="signOut()">sign out</button><br><br>';
+                elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p><button class="btn btn-secondary" onclick="signOut()">sign out</button><br><br>';
             }
             
             function request(url, xml) {
@@ -231,14 +257,14 @@
             function loginembed() {
                 document.getElementById('ns-embed').src = "https://nationstates.net/page=login";
                 document.getElementById('embed-switch').removeEventListener('click', loginembed, false);
-                document.getElementById('embed-text').innerHTML = '<p>Once you have logged in, <button id="embed-switch" class="btn">verify your nation.</button></p>';
+                document.getElementById('embed-text').innerHTML = '<p>Once you have logged in, <button id="embed-switch" class="btn btn-secondary">verify your nation.</button></p>';
                 document.getElementById('embed-switch').addEventListener('click', verifyembed, false);
             }
             
             function verifyembed() {
                 document.getElementById('ns-embed').src = "https://embed.nationstates.net/page=verify_login#proof_of_login_checksum";
                 document.getElementById('embed-switch').removeEventListener('click', verifyembed, false);
-                document.getElementById('embed-text').innerHTML = '<p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn">login first.</button></p>';
+                document.getElementById('embed-text').innerHTML = '<p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn btn-secondary">login first.</button></p>';
                 document.getElementById('embed-switch').addEventListener('click', loginembed, false);
             }
             
