@@ -218,12 +218,14 @@
                             youVoted.innerHTML = 'You voted for ';
                             voted.forEach(function(candidate) {
                                 votedCounter--;
+                                var candidateXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + candidate.key + "&q=flag+name", true);
+                                var candidateName = candidateXML.getElementsByTagName("NAME").item(0).textContent;
                                 if (votedCounter === 0) {
-                                    youVoted.innerHTML += candidate.key + '.';
+                                    youVoted.innerHTML += candidateName + '.';
                                 } else if (votedCounter === 1) {
-                                    youVoted.innerHTML += candidate.key + 'and ';
+                                    youVoted.innerHTML += candidateName + ' and ';
                                 } else {
-                                    youVoted.innerHTML += candidate + ', ';
+                                    youVoted.innerHTML += candidateName + ', ';
                                 }
                             });
                             electionSection.appendChild(youVoted);
