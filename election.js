@@ -47,7 +47,7 @@ function verify() {
     document.getElementById('nation-name-group').classList.remove('has-warning');
     document.getElementById('verification-code-feedback').innerHTML = '';
     document.getElementById('verification-code-group').classList.remove('has-warning');
-    nationName = document.getElementById('nation-name').value;
+    nationName = docume nt.getElementById('nation-name').value;
     internalName = nationName.toLowerCase().replace(/ /g, "_");
     verificationCode = document.getElementById('verification-code').value;
     if (nationName === null || nationName.length < 2) {
@@ -145,18 +145,16 @@ function updateElectionsData(data) {
                     var card = document.createElement('div');
                     card.setAttribute('id', data.key + '-' + candidate.key);
                     card.classList.add('card');
+                    card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8))';
                     firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function (snapshot) {
                         if (snapshot.val()) {
-                            card.classList.add('card-inverse');
+                            card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8))';
                         }
                     });
                     electionInner.appendChild(card);
-                    var img = document.createElement('img');
-                    img.setAttribute('class', 'card-img-top');
                     var candidateXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + candidate.key + "&q=flag+name", true);
                     var flagSrc = candidateXML.getElementsByTagName("FLAG").item(0).textContent;
-                    img.setAttribute('src', flagSrc);
-                    card.appendChild(img);
+                    card.style.backgroundImage += ', url("' + flagSrc + '")';
                     var cardBlock = document.createElement('div');
                     cardBlock.classList.add('card-block');
                     card.appendChild(cardBlock);
