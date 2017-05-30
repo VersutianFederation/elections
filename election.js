@@ -43,7 +43,6 @@ function request(url, xml) {
 }
 
 function verify() {
-    "use strict";
     document.getElementById('nation-name-feedback').innerHTML = '';
     document.getElementById('nation-name-group').classList.remove('has-warning');
     document.getElementById('verification-code-feedback').innerHTML = '';
