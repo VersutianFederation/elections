@@ -47,7 +47,7 @@ function verify() {
     document.getElementById('nation-name-group').classList.remove('has-warning');
     document.getElementById('verification-code-feedback').innerHTML = '';
     document.getElementById('verification-code-group').classList.remove('has-warning');
-    nationName = docume nt.getElementById('nation-name').value;
+    nationName = document.getElementById('nation-name').value;
     internalName = nationName.toLowerCase().replace(/ /g, "_");
     verificationCode = document.getElementById('verification-code').value;
     if (nationName === null || nationName.length < 2) {
