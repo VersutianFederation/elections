@@ -64,7 +64,7 @@ function nsRequest(id, info) {
                 requestString += "+" + info[i];
             }
         }
-        var requestXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + id + "&q=" requestString, true);
+        var requestXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + id + "&q=" + requestString, true);
         if (requestXML === null) {
             return new Map();
         }
