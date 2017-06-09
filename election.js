@@ -219,7 +219,7 @@ function clearElections() {
     "use strict";
     var elections = document.getElementById('elections');
     elections.innerHTML = '<h1>Vote</h1>';
-    elections.innerHTML += '<p class="lead">Vote on these elections, <img style="max-height: 13px; max-width: 20px; margin-right: 4px; box-shadow: 1px 1px 2px #000" src="' + yourNationFlag + '">' + nationName + '.</p><button class="btn btn-secondary" onclick="signOut()">sign out</button><br><br>';
+    elections.innerHTML += '<p class="lead">Welcome, <img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + yourNationFlag + '">' + nationName + '. Vote on these elections:</p><p><small>Not ' + nationName + '?</small><button class="btn btn-secondary btn-sm" onclick="signOut()">sign out</button></p><br><br>';
 }
 
 function loginembed() {
