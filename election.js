@@ -53,28 +53,31 @@ function request(url, xml) {
 
 function nsRequest(id, info) {
     "use strict";
-    if (nationDataMap.has(id)) {
-        return nationDataMap.get(id);
-    } else {
-        var requestString;
-        for (var i = 0; i < info.length; i++) {
-            if (i == 0) {
+    if (!nationDataMap.has(id)) {
+        nationDataMap.set(id, new Map());
+    }
+    var nationMap = nationDataMap.get(id);
+    var requestString = "";
+    var requests = [];
+    for (var i = 0; i < info.length; i++) {
+        if (!nationMap.has(info[i]) || nationMap.get(info[i]).length === 0) {
+            requests.push(info[i]);
+            if (requestString.length === 0) {
                 requestString = info[i];
             } else {
                 requestString += "+" + info[i];
             }
         }
-        var requestXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + id + "&q=" + requestString, true);
-        if (requestXML === null) {
-            return new Map();
-        }
-        var requestMap = new Map();
-        for (var i = 0; i < info.length; i++) {
-            requestMap.set(info[i], requestXML.getElementsByTagName(info[i].toUpperCase()).item(0).textContent);
-        }
-        nationDataMap.set(id, requestMap);
-        return requestMap;
     }
+    var requestXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + id + "&q=" + requestString, true);
+    for (var i = 0; i < requests.length; i++) {
+        if (requestXML === null) {
+            nationMap.set(request[i], "");
+        } else {
+            nationMap.set(requests[i], requestXML.getElementsByTagName(requests[i].toUpperCase()).item(0).textContent);
+        }
+    }
+    return nationMap;
 }
 
 function verify() {
