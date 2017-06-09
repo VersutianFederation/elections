@@ -70,7 +70,7 @@ function nsRequest(id, info) {
         }
         var requestMap = new Map();
         for (var i = 0; i < info.length; i++) {
-            requestMap.set(info[i], candidateXML.getElementsByTagName(info[i].toUpperCase()).item(0).textContent);
+            requestMap.set(info[i], requestXML.getElementsByTagName(info[i].toUpperCase()).item(0).textContent);
         }
         nationDataMap.set(id, requestMap);
         return requestMap;
