@@ -165,14 +165,15 @@ function updateElectionsData(data) {
                 youVoted.innerHTML = 'You voted for ';
                 voted.forEach(function (candidate) {
                     votedCounter--;
-                    var candidateInfo = nsRequest(candidate.key, ['name']);
+                    var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
                     var candidateName = candidateInfo.get('name');
+                    var candidateFlag = candidateInfo.get('flag');
                     if (votedCounter === 0) {
-                        youVoted.innerHTML += candidateName + '.';
+                        youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + '.';
                     } else if (votedCounter === 1) {
-                        youVoted.innerHTML += candidateName + ' and ';
+                        youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ' and ';
                     } else {
-                        youVoted.innerHTML += candidateName + ', ';
+                        youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ', ';
                     }
                 });
                 electionSection.appendChild(youVoted);
