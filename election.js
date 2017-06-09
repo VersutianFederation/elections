@@ -223,20 +223,46 @@ function clearElections() {
     elections.innerHTML += '<p class="lead">Welcome, <img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + yourNationFlag + '">' + nationName + '. Vote on these elections:</p><p><small>Not ' + nationName + ' or on a public device? </small> <button class="btn btn-secondary btn-sm" onclick="signOut()">sign out</button></p>';
 }
 
-function loginembed() {
+function loginEmbed() {
     "use strict";
     document.getElementById('ns-embed').src = "https://nationstates.net/page=login";
-    document.getElementById('embed-switch').removeEventListener('click', loginembed, false);
-    document.getElementById('embed-text').innerHTML = '<p>Once you have logged in, <button id="embed-switch" class="btn btn-secondary btn-sm">verify your nation</button>.</p>';
-    document.getElementById('embed-switch').addEventListener('click', verifyembed, false);
+    document.getElementById('embed-switch').removeEventListener('click', loginEmbed, false);
+    document.getElementById('embed-text').innerHTML = '<p>Once you have logged in, <button id="embed-switch" class="btn btn-secondary btn-sm">verify your nation</button></p>';
+    document.getElementById('embed-switch').addEventListener('click', verifyEmbed, false);
 }
 
-function verifyembed() {
+function verifyEmbed() {
     "use strict";
     document.getElementById('ns-embed').src = "https://embed.nationstates.net/page=verify_login#proof_of_login_checksum";
-    document.getElementById('embed-switch').removeEventListener('click', verifyembed, false);
-    document.getElementById('embed-text').innerHTML = '<p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn btn-secondary btn-sm">login first</button>.</p>';
-    document.getElementById('embed-switch').addEventListener('click', loginembed, false);
+    document.getElementById('embed-switch').removeEventListener('click', verifyEmbed, false);
+    document.getElementById('embed-text').innerHTML = '<p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn btn-secondary btn-sm">login first</button></p>';
+    document.getElementById('embed-switch').addEventListener('click', loginEmbed, false);
+}
+
+function collapseHeader() {
+    "use strict";
+    document.getElementById('header-toggle').removeEventListener('click', collapseHeader, false);
+    document.getElementById('header-toggle').innerHTML = '<span class="fa fa-arrow-down" aria-hidden="true"></span> Expand';
+    document.getElementById('header-inside').innerHTML = '<h1 class="display-4"><b>Versutian</b> Elections</h1>';
+    document.getElementById('header').classList.remove('jumbotron');
+    document.getElementById('header').classList.remove('jumbotron-fluid');
+    document.getElementById('header').style.paddingTop = "1rem";
+    document.getElementById('header').style.paddingBottom = "1rem";
+    document.getElementById('header').style.marginBottom = "2rem";
+    document.getElementById('header-toggle').addEventListener('click', expandHeader, false);
+}
+
+function expandHeader() {
+    "use strict";
+    document.getElementById('header-toggle').removeEventListener('click', expandHeader, false);
+    document.getElementById('header-toggle').innerHTML = '<span class="fa fa-arrow-up" aria-hidden="true"></span> Collapse';
+    document.getElementById('header-inside').innerHTML = '<h1 class="display-3"><b>Versutian</b> Elections</h1><p class="lead">Welcome to the official voting site for the Versutian Federation.</p><p>Here, you may cast your ballot for current elections to participate in our democracy with a simple two step process &mdash; no registration required.</p><a class="btn btn-secondary" href="faq.html">Learn more</a>';
+    document.getElementById('header').classList.add('jumbotron');
+    document.getElementById('header').classList.add('jumbotron-fluid');
+    document.getElementById('header').style.paddingTop = null;
+    document.getElementById('header').style.paddingBottom = null;
+    document.getElementById('header').style.marginBottom = null;
+    document.getElementById('header-toggle').addEventListener('click', collapseHeader, false);
 }
 
 function signOut() {
@@ -246,6 +272,7 @@ function signOut() {
 
 function initApp() {
     "use strict";
+    document.getElementById('header-toggle').addEventListener('click', collapseHeader, false);
     firebase.auth().onAuthStateChanged(function (user) {
         var elections = document.getElementById('elections');
         if (user) {
@@ -266,8 +293,8 @@ function initApp() {
                 elections.innerHTML += '<form><div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
             }
         } else {
-            elections.innerHTML = '<h1>Login with NationStates</h1><div id="login-form"><form><div class="form-group" id="nation-name-group"><input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name"><div id="nation-name-feedback"></div><p id="nationHelpBlock" class="form-text text-muted">Your nation\'s short name, as it is displayed on NationStates, for example, <b>Akohos</b>.</p></div></form><br><iframe src="https://embed.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%" id="ns-embed"></iframe><div id="embed-text"><p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn btn-secondary btn-sm">login first</button>.</p></div><br><form><div class="form-group" id="verification-code-group"><input type="text" class="form-control" id="verification-code" aria-describedby="codeHelpBlock" placeholder="Code"><div id="verification-code-feedback"></div><p id="codeHelpBlock" class="form-text text-muted">Copy the code you see from the NationStates.net page into this box.</p></div></form><br><button class="btn btn-primary" onclick="verify()">Login</button></div><br><br>';
-            document.getElementById('embed-switch').addEventListener('click', loginembed, false);
+            elections.innerHTML = '<h1>Login with NationStates</h1><div id="login-form"><form><div class="form-group" id="nation-name-group"><input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name"><div id="nation-name-feedback"></div><p id="nationHelpBlock" class="form-text text-muted">Your nation\'s short name, as it is displayed on NationStates, for example, <b>Akohos</b>.</p></div></form><br><iframe src="https://embed.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%" id="ns-embed"></iframe><div id="embed-text"><p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn btn-secondary btn-sm">login first</button></p></div><br><form><div class="form-group" id="verification-code-group"><input type="text" class="form-control" id="verification-code" aria-describedby="codeHelpBlock" placeholder="Code"><div id="verification-code-feedback"></div><p id="codeHelpBlock" class="form-text text-muted">Copy the code you see from the NationStates.net page into this box.</p></div></form><br><button class="btn btn-primary" onclick="verify()">Login</button></div><br><br>';
+            document.getElementById('embed-switch').addEventListener('click', loginEmbed, false);
         }
     });
 }
