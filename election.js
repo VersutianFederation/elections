@@ -249,13 +249,13 @@ function initApp() {
             var yourNation = nsRequest(internalName, ['name', 'flag']);
             nationName = yourNation.get('name');
             yourNationFlag = yourNation.get('flag');
+            var electionsData = firebase.database().ref('elections/');
             electionsData.on('value', function (snapshot) {
                 clearElections();
                 snapshot.forEach(function (childSnapshot) {
                     updateElectionsData(childSnapshot);
                 });
             });
-            
             if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                 elections.innerHTML += '<hr>';
                 elections.innerHTML += '<h2>Create new election</h2>';
