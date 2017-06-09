@@ -11,7 +11,8 @@ var config = {
     messagingSenderId: "158551980529"
 };
 firebase.initializeApp(config);
-var nationName;
+var nationName = "Unknown Nation";
+var yourNationFlag = "https://www.nationstates.net/images/flags/Default.png";
 var internalName;
 var verificationCode;
 var accessLevel = "CITIZEN";
@@ -22,6 +23,8 @@ var sPKCS8PEM = '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBK
 var kid = '71485c8500b96d3a3ba4c46fdce05bc81ed0b55f';
 var token;
 var verifyurl;
+var nationDataMap = new Map();
+var nsBan = false;
 
 function denyCode() {
     "use strict";
@@ -35,10 +38,42 @@ function request(url, xml) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, false);
     xhr.send();
+    if (url.startsWith('https://www.nationstates.net/cgi-bin/api.cgi?nation=')) {
+        if (xhr.status === 429) {
+            alert('You have been banned for 15 minutes by the NationStates API');
+            return null;
+        }
+    }
     if (xml) {
         return xhr.responseXML;
     } else {
         return xhr.responseText;
+    }
+}
+
+function nsRequest(id, info) {
+    "use strict";
+    if (nationDataMap.has(id)) {
+        return nationDataMap.get(id);
+    } else {
+        var requestString;
+        for (var i = 0; i < info.length; i++) {
+            if (i == 0) {
+                requestString = info[i];
+            } else {
+                requestString += "+" + info[i];
+            }
+        }
+        var requestXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + id + "&q=" requestString, true);
+        if (requestXML === null) {
+            return new Map();
+        }
+        var requestMap = new Map();
+        for (var i = 0; i < info.length; i++) {
+            requestMap.set(info[i], candidateXML.getElementsByTagName(info[i].toUpperCase()).item(0).textContent);
+        }
+        nationDataMap.set(id, requestMap);
+        return requestMap;
     }
 }
 
@@ -102,7 +137,8 @@ function addTest() {
             opponent: {
                 other_voter: true
             }
-        }
+        },
+        votes: 1
     };
 
     var electionId = firebase.database().ref().child('elections').push().key;
@@ -126,8 +162,8 @@ function updateElectionsData(data) {
                 youVoted.innerHTML = 'You voted for ';
                 voted.forEach(function (candidate) {
                     votedCounter--;
-                    var candidateXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + candidate.key + "&q=flag+name", true);
-                    var candidateName = candidateXML.getElementsByTagName("NAME").item(0).textContent;
+                    var candidateInfo = nsRequest(candidate.key, ['name']);
+                    var candidateName = candidateInfo.get('name');
                     if (votedCounter === 0) {
                         youVoted.innerHTML += candidateName + '.';
                     } else if (votedCounter === 1) {
@@ -145,24 +181,24 @@ function updateElectionsData(data) {
                     var card = document.createElement('div');
                     card.setAttribute('id', data.key + '-' + candidate.key);
                     card.classList.add('card');
-                    card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8))';
+                    card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6))';
                     card.style.backgroundSize = 'cover';
                     card.style.backgroundPosition = 'center';
                     card.style.backgroundRepeat = 'no-repeat';
                     firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function (snapshot) {
                         if (snapshot.val()) {
-                            card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8))';
+                            card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6))';
                             card.style.color = '#fff';
                         }
                     });
                     electionInner.appendChild(card);
-                    var candidateXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + candidate.key + "&q=flag+name", true);
-                    var flagSrc = candidateXML.getElementsByTagName("FLAG").item(0).textContent;
+                    var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
+                    var flagSrc = candidateInfo.get('flag');
                     card.style.backgroundImage += ', url("' + flagSrc + '")';
                     var cardBlock = document.createElement('div');
                     cardBlock.classList.add('card-block');
                     card.appendChild(cardBlock);
-                    var candidateName = candidateXML.getElementsByTagName("NAME").item(0).textContent;
+                    var candidateName = candidateInfo.get('name');
                     cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
                     document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function () {
                         firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
@@ -180,7 +216,7 @@ function clearElections() {
     "use strict";
     var elections = document.getElementById('elections');
     elections.innerHTML = '<h1>Vote</h1>';
-    elections.innerHTML += '<p class="lead">Vote on these elections, ' + nationName + '.</p><button class="btn btn-secondary" onclick="signOut()">sign out</button><br><br>';
+    elections.innerHTML += '<p class="lead">Vote on these elections, <img style="max-height: 13px; max-width: 20px; margin-right: 4px; box-shadow: 1px 1px 2px #000" src="' + yourNationFlag + '">' + nationName + '.</p><button class="btn btn-secondary" onclick="signOut()">sign out</button><br><br>';
 }
 
 function loginembed() {
@@ -210,9 +246,9 @@ function initApp() {
         var elections = document.getElementById('elections');
         if (user) {
             internalName = user.uid;
-            var nameXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + internalName + "&q=name", true);
-            nationName = nameXML.getElementsByTagName("NAME").item(0).textContent;
-            var electionsData = firebase.database().ref('elections/');
+            var yourNation = nsRequest(internalName, ['name', 'flag']);
+            nationName = yourNation.get('name');
+            yourNationFlag = yourNation.get('flag');
             electionsData.on('value', function (snapshot) {
                 clearElections();
                 snapshot.forEach(function (childSnapshot) {
