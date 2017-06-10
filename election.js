@@ -41,7 +41,7 @@ function request(url, xml) {
     if (url.startsWith('https://www.nationstates.net/cgi-bin/api.cgi?nation=')) {
         if (xhr.status === 429) {
             if (nsBan) {
-                alert('You have been banned for 15 minutes by the NationStates API');
+                alert('You have been banned for' + xhr.getResponseHeader('x-retry-after') + 'seconds by the NationStates API');
             }
             nsBan = true;
             return null;
