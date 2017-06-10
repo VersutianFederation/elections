@@ -200,17 +200,16 @@ function updateElectionsData(data) {
     electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
     firebase.database().ref('/elections/' + data.key + '/options').on('value', function (snapshot) {
         var votedCounter;
+        var forceVote = false;
         firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').on('value', function (submitted) {
             if (submitted.val()) {
-                votedCounter = -1;
+                forceVote = true;
+            } else {
+                forceVote = false;
             }
             firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value', function (voted) {
-                if (votedCounter === -1) {
-                    votedCounter = data.val().votes;
-                } else {
-                    votedCounter = voted.numChildren();
-                }
-                if (votedCounter === data.val().votes) { // if the person voted,
+                votedCounter = voted.numChildren();
+                if (forceVote || votedCounter === data.val().votes) { // if the person voted,
                     $('#' + data.key + '-inner').remove();
                     $('#' + data.key + '-submit-vote').remove();
                     var row = document.getElementById(data.key + '-voted');
@@ -300,7 +299,6 @@ function updateElectionsData(data) {
                         youVoted.innerHTML = 'You abstained from voting in this election.';
                     } else {
                         youVoted.innerHTML = 'You voted for ';
-                        votedCounter = voted.numChildren();
                         voted.forEach(function (candidate) {
                             votedCounter--;
                             var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
