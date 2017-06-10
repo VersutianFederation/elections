@@ -227,7 +227,6 @@ function updateElectionsData(data) {
                         },
                         options: {}
                     });
-                    chartMap.set(data.key, chart);
                 }
                 snapshot.forEach(function (candidate) {
                     var index = chart.data.labels.indexOf(candidate.key);
