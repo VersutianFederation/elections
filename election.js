@@ -346,8 +346,8 @@ function updateElectionsData(data) {
                             firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true);
                         };
                         var unvoteFor = function () {
-                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(false);
-                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(false);
+                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).remove();
+                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).remove();
                         }
                         var flagSrc = candidateInfo.get('flag');
                         firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function (snapshot) {
