@@ -290,6 +290,7 @@ function updateElectionsData(data) {
                                 firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).remove();
                                 firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).remove();
                             });
+                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').set(false);
                         }, false);
                         row.appendChild(unvote);
                     }
