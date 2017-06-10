@@ -149,11 +149,17 @@ function addTest() {
 }
 */
 
+function removeElection(election) {
+    $('#sec-' + election.key).remove();
+}
+
 function updateElectionsData(data) {
     "use strict";
+    removeElection(election);
     firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function (snapshot) {
         var elections = document.getElementById('elections'),
             electionSection = document.createElement('div');
+        electionSection.setAttribute('id', 'sec-' + data.key);
         electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
         elections.appendChild(electionSection);
         //var pieChart = document.createElement('div');
@@ -216,7 +222,20 @@ function updateElectionsData(data) {
     });
 }
 
-function clearElections() {
+function addElection(election) {
+    updateElectionsData(election);
+    var election = firebase.database().ref('elections/' + election.key);
+    election.on('value', function(snapshot) {
+       updateElectionsData(snapshot);
+    });
+}
+
+function unregisterElection(election) {
+    removeElection(election);
+    firebase.database().ref('elections/' + election.key).off();
+}
+
+function startElections() {
     "use strict";
     var elections = document.getElementById('elections');
     elections.innerHTML = '<h1>Vote</h1>';
@@ -280,12 +299,13 @@ function initApp() {
             var yourNation = nsRequest(internalName, ['name', 'flag']);
             nationName = yourNation.get('name');
             yourNationFlag = yourNation.get('flag');
+            startElections();
             var electionsData = firebase.database().ref('elections/');
-            electionsData.on('value', function (snapshot) {
-                clearElections();
-                snapshot.forEach(function (childSnapshot) {
-                    updateElectionsData(childSnapshot);
-                });
+            electionsData.on('child_added', function(data) {
+                addElection(data);
+            });
+            electionsData.on('child_removed', function(data) {
+                removeElection(data);
             });
             if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                 elections.innerHTML += '<hr>';
