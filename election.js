@@ -296,11 +296,11 @@ function updateElectionsData(data) {
                         }, false);
                         row.appendChild(unvote);
                     }
-                    youVoted.innerHTML = 'You voted for ';
-                    votedCounter = voted.numChildren();
                     if (votedCounter === 0) {
-                        youVoted = 'You abstained from voting in this election.';
+                        youVoted.innerHTML = 'You abstained from voting in this election.';
                     } else {
+                        youVoted.innerHTML = 'You voted for ';
+                        votedCounter = voted.numChildren();
                         voted.forEach(function (candidate) {
                             votedCounter--;
                             var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
