@@ -194,6 +194,8 @@ function randomColor(h, s, v) {
     return [Math.floor(r * 256), Math.floor(g * 256), Math.floor(b * 256)]
 }
 
+var chartMap = new Map();
+
 function updateElectionsData(data) {
     "use strict";
     var elections = document.getElementById('elections');
@@ -210,13 +212,14 @@ function updateElectionsData(data) {
             if (votedCounter === data.val().votes) { // if the person voted,
                 $('#' + data.key + '-inner').remove();
                 var chart;
-                if (document.getElementById(data.key + '-chart') === null) {
-                    var canvasCont = document.createElement('div');
-                    electionSection.appendChild(canvasCont);
-                    canvasCont.innerHTML = '<canvas id="' + data.key + '-chart' + '" width="250" height="250"></canvas>'
-                    var canvas = document.getElementById(data.key + '-chart');
-                    var ctx = canvas.getContext('2d');
-                    chart = new Chart(ctx, {
+                if (chartMap.has(data.key)) {
+                    chart = chartMap.get(data.key);
+                } else {
+                    var canvas = document.createElement('canvas');
+                    canvas.width = 400;
+                    canvas.height = 400;
+                    electionSection.appendChild(canvas);
+                    chart = new Chart(canvas, {
                         type: 'doughnut',
                         data: {
                             labels: [],
@@ -227,6 +230,7 @@ function updateElectionsData(data) {
                         },
                         options: {}
                     });
+                    chartMap.set(data.key, chart);
                 }
                 snapshot.forEach(function (candidate) {
                     var index = chart.data.labels.indexOf(candidate.key);
