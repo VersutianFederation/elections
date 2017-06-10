@@ -153,11 +153,11 @@ function removeElection(election) {
 }
 
 function randomColor(h, s, v) {
-    h_i = Math.floor(v * 6);
-    f = v * 6 - h_i;
-    p = h * (1 - s);
-    q = h * (1 - f * s);
-    t = h * (1 - (1 - f) * s);
+    h_i = Math.floor(h * 6);
+    f = h * 6 - h_i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
     if (h_i === 0) {
         r = v;
         g = t;
@@ -257,7 +257,7 @@ function updateElectionsData(data) {
                                 dataset.data.push(candidate.numChildren() - 1);
                                 h += goldenRatioConjugate;
                                 h %= 1;
-                                var rgb = randomColor(0.5, 0.5, h);
+                                var rgb = randomColor(h, 0.5, 0.95);
                                 index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
                                 /*
                                 var img = new Image();
