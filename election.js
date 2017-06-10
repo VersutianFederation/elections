@@ -298,19 +298,23 @@ function updateElectionsData(data) {
                     }
                     youVoted.innerHTML = 'You voted for ';
                     votedCounter = voted.numChildren();
-                    voted.forEach(function (candidate) {
-                        votedCounter--;
-                        var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
-                        var candidateName = candidateInfo.get('name');
-                        var candidateFlag = candidateInfo.get('flag');
-                        if (votedCounter === 0) {
-                            youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + '.';
-                        } else if (votedCounter === 1) {
-                            youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ' and ';
-                        } else {
-                            youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ', ';
-                        }
-                    });
+                    if (votedCounter === 0) {
+                        youVoted = 'You abstained from voting in this election.';
+                    } else {
+                        voted.forEach(function (candidate) {
+                            votedCounter--;
+                            var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
+                            var candidateName = candidateInfo.get('name');
+                            var candidateFlag = candidateInfo.get('flag');
+                            if (votedCounter === 0) {
+                                youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + '.';
+                            } else if (votedCounter === 1) {
+                                youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ' and ';
+                            } else {
+                                youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ', ';
+                            }
+                        });
+                    }
                 } else { // if they still need to vote
                     $('#' + data.key + '-voted').remove();
                     var electionInner = document.getElementById(data.key + '-inner');
@@ -364,19 +368,17 @@ function updateElectionsData(data) {
                             }
                         });
                     });
-                    if (snapshot.numChildren() > 2) {
-                        var submitVoteButton = document.getElementById(data.key + '-submit-vote');
-                        if (submitVoteButton === null) {
-                            submitVoteButton = document.createElement('button');
-                            submitVoteButton.setAttribute('id', data.key + '-submit-vote');
-                            submitVoteButton.classList.add('btn');
-                            submitVoteButton.classList.add('btn-secondary');
-                            submitVoteButton.textContent = 'Submit vote';
-                            submitVoteButton.addEventListener('click', function () {
-                                firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').set(true);
-                            }, false);
-                            electionSection.appendChild(submitVoteButton);
-                        }
+                    var submitVoteButton = document.getElementById(data.key + '-submit-vote');
+                    if (submitVoteButton === null) {
+                        submitVoteButton = document.createElement('button');
+                        submitVoteButton.setAttribute('id', data.key + '-submit-vote');
+                        submitVoteButton.classList.add('btn');
+                        submitVoteButton.classList.add('btn-secondary');
+                        submitVoteButton.textContent = 'Submit vote';
+                        submitVoteButton.addEventListener('click', function () {
+                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').set(true);
+                        }, false);
+                        electionSection.appendChild(submitVoteButton);
                     }
                 }
             });
