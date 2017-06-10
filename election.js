@@ -246,11 +246,11 @@ function updateElectionsData(data) {
                             index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
                             var img = new Image();
                             img.src = nsRequest(candidate.key, ['name', 'flag']).get('flag');
-                            img.onLoad = function() {
+                            img.onload = function() {
                                 var ctx = chart.canvas.getContext('2d');
                                 var fill = ctx.createPattern(img, 'no-repeat');
                                 dataset.backgroundColor[index] = fill;
-                            }
+                            };
                         });
                     } else {
                         chart.data.datasets.forEach((dataset) => {
