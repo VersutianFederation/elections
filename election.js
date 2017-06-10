@@ -232,7 +232,9 @@ function updateElectionsData(data) {
                                 backgroundColor: []
                             }]
                         },
-                        options: {}
+                        options: {
+                            maintainAspectRatio: false
+                        }
                     });
                     chartMap.set(data.key, chart);
                 }
