@@ -169,7 +169,6 @@ function updateElectionsData(data) {
         electionSection.setAttribute('id', 'sec-' + data.key);
         elections.appendChild(electionSection);
     }
-    electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
     firebase.database().ref('/elections/' + data.key + '/options').on('value', function (snapshot) {
         //var pieChart = document.createElement('div');
         //pieChart.setAttribute('id', 'pie-' + data.key);
@@ -177,6 +176,7 @@ function updateElectionsData(data) {
             var votedCounter = voted.numChildren();
             if (votedCounter === data.val().votes) { // if the person voted,
                 var youVoted = document.createElement('p');
+                youVoted.setAttribute('id', data.key + '-voted');
                 youVoted.innerHTML = 'You voted for ';
                 voted.forEach(function (candidate) {
                     votedCounter--;
@@ -194,6 +194,7 @@ function updateElectionsData(data) {
                 electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
                 electionSection.appendChild(youVoted);
             } else { // if they still need to vote
+                $('#' + data.key + '-voted').remove();
                 var electionInner = document.createElement('div');
                 electionInner.classList.add('card-columns');
                 electionSection.appendChild(electionInner);
