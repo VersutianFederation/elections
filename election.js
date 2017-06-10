@@ -74,12 +74,14 @@ function nsRequest(id, info) {
             }
         }
     }
-    var requestXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + id + "&q=" + requestString, true);
-    for (var i = 0; i < requests.length; i++) {
-        if (requestXML === null) {
-            nationMap.set(request[i], "");
-        } else {
-            nationMap.set(requests[i], requestXML.getElementsByTagName(requests[i].toUpperCase()).item(0).textContent);
+    if (requestString.length !== 0) {
+        var requestXML = request("https://www.nationstates.net/cgi-bin/api.cgi?nation=" + id + "&q=" + requestString, true);
+        for (var i = 0; i < requests.length; i++) {
+            if (requestXML === null) {
+                nationMap.set(request[i], "");
+            } else {
+                nationMap.set(requests[i], requestXML.getElementsByTagName(requests[i].toUpperCase()).item(0).textContent);
+            }
         }
     }
     return nationMap;
