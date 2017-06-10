@@ -243,7 +243,14 @@ function updateElectionsData(data) {
                         chart.data.datasets.forEach((dataset) => {
                             dataset.data.push(candidate.numChildren() - 1);
                             var rgb = randomColor(Math.random(), 0.5, 0.95);
-                            dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')');
+                            index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
+                            var img = new Image();
+                            img.src = nsRequest(candidate.key, ['name', 'flag'].get('flag'))
+                            img.onLoad = function() {
+                                var ctx = chart.canvas.getContext('2d');
+                                var fill = ctx.createPattern(img, 'no-repeat');
+                                dataset.backgroundColor[index] = fill;
+                            }
                         });
                     } else {
                         chart.data.datasets.forEach((dataset) => {
@@ -347,7 +354,7 @@ function startElections() {
     var elections = document.getElementById('elections');
     elections.innerHTML = '<p><span class="lead">Welcome, <img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + yourNationFlag + '">' + nationName + '.</span><small> Not ' + nationName + ' or on a public device? </small> <button class="btn btn-secondary btn-sm" onclick="signOut()">sign out</button></p>';
     elections.innerHTML += '<h1 class="display-4">Vote</h1>';
-    $('#elections').after('<div class="container"><hr><h1 class="display-4">Past Elections</h1><p>There are no past elections at this time.</p><br><br></div>');
+    $('#elections').after('<div class="container" id="past"><hr><h1 class="display-4">Past Elections</h1><p>There are no past elections at this time.</p><br><br></div>');
 }
 
 function loginEmbed() {
@@ -396,6 +403,7 @@ function signOut() {
     "use strict";
     firebase.auth().signOut();
     chartMap.clear();
+    $('#past').remove();
 }
 
 function initApp() {
