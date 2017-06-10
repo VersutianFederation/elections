@@ -220,10 +220,11 @@ function updateElectionsData(data) {
                         electionSection.appendChild(row);
                     }
                     var chart;
-                    if (chartMap.has(data.key)) {
+                    if (chartMap.has(data.key) && document.getElementById(data.key + '-chart-container') !== null) {
                         chart = chartMap.get(data.key);
                     } else {
                         var canvasCont = document.createElement('div');
+                        canvasCont.setAttribute('id', data.key + '-chart-container');
                         canvasCont.style.position = 'relative';
                         canvasCont.style.margin = 'auto';
                         canvasCont.style.width = '100%';
@@ -312,7 +313,6 @@ function updateElectionsData(data) {
                     });
                 } else { // if they still need to vote
                     $('#' + data.key + '-voted').remove();
-                    chartMap.clear();
                     var electionInner = document.getElementById(data.key + '-inner');
                     if (electionInner === null) {
                         var electionInner = document.createElement('div');
