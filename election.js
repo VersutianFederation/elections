@@ -200,7 +200,7 @@ function updateElectionsData(data) {
     electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
     firebase.database().ref('/elections/' + data.key + '/options').on('value', function (snapshot) {
         var votedCounter;
-        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').once('value', function (submitted) {
+        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').on('value', function (submitted) {
             if (submitted.val()) {
                 votedCounter = -1;
             }
