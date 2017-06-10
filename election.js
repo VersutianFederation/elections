@@ -223,7 +223,6 @@ function updateElectionsData(data) {
 }
 
 function addElection(election) {
-    updateElectionsData(election);
     var election = firebase.database().ref('elections/' + election.key);
     election.on('value', function(snapshot) {
        updateElectionsData(snapshot);
