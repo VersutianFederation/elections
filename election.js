@@ -257,7 +257,7 @@ function updateElectionsData(data) {
                                 dataset.data.push(candidate.numChildren() - 1);
                                 h += goldenRatioConjugate;
                                 h %= 1;
-                                var rgb = randomColor(h, 0.5, 0.5);
+                                var rgb = randomColor(h, 0.5, 0.75);
                                 index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
                                 /*
                                 var img = new Image();
@@ -420,26 +420,24 @@ function verifyEmbed() {
 function collapseHeader() {
     "use strict";
     document.getElementById('header-toggle').removeEventListener('click', collapseHeader, false);
-    document.getElementById('header-toggle').innerHTML = '<span class="fa fa-arrow-down" aria-hidden="true"></span> Expand';
+    document.getElementById('header-toggle').innerHTML = '<span class="fa fa-arrow-down" aria-hidden="true"></span> Expand <span class="fa fa-arrow-down" aria-hidden="true"></span>';
     document.getElementById('header-inside').innerHTML = '<h1 class="display-4"><b>Versutian</b> Elections</h1>';
     document.getElementById('header').classList.remove('jumbotron');
     document.getElementById('header').classList.remove('jumbotron-fluid');
     document.getElementById('header').style.paddingTop = "1rem";
     document.getElementById('header').style.paddingBottom = "1rem";
-    document.getElementById('header').style.marginBottom = "2rem";
     document.getElementById('header-toggle').addEventListener('click', expandHeader, false);
 }
 
 function expandHeader() {
     "use strict";
     document.getElementById('header-toggle').removeEventListener('click', expandHeader, false);
-    document.getElementById('header-toggle').innerHTML = '<span class="fa fa-arrow-up" aria-hidden="true"></span> Collapse';
+    document.getElementById('header-toggle').innerHTML = '<span class="fa fa-arrow-up" aria-hidden="true"></span> Collapse <span class="fa fa-arrow-up" aria-hidden="true"></span>';
     document.getElementById('header-inside').innerHTML = '<h1 class="display-3"><b>Versutian</b> Elections</h1><p class="lead">Welcome to the official voting site for the Versutian Federation.</p><p>Here, you may cast your ballot for current elections to participate in our democracy with a simple two step process &mdash; no registration required.</p><a class="btn btn-secondary" href="faq.html">Learn more</a><br><br>';
     document.getElementById('header').classList.add('jumbotron');
     document.getElementById('header').classList.add('jumbotron-fluid');
     document.getElementById('header').style.paddingTop = null;
     document.getElementById('header').style.paddingBottom = null;
-    document.getElementById('header').style.marginBottom = null;
     document.getElementById('header-toggle').addEventListener('click', collapseHeader, false);
 }
 

@@ -3,13 +3,15 @@
     border-color: #333
 }
 #header-toggle {
-    color: #fff; 
-    border-color: #fff
+    color: #292b2c; 
+    border-color: #fff;
+    margin-bottom: 2rem;
+    border-radius: 0;
 }
 #header-toggle:hover {
-    color: #000; 
-    border-color: #fff;
-    background-color: #fff;
+    color: #fff; 
+    border-color: #292b2c;
+    background-color: #292b2c;
 }
 .card {
     transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
