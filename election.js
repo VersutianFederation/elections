@@ -312,6 +312,7 @@ function updateElectionsData(data) {
                 } else { // if they still need to vote
                     $('#' + data.key + '-voted').remove();
                     chartMap.clear();
+                    
                     var electionInner = document.getElementById(data.key + '-inner');
                     if (electionInner === null) {
                         var electionInner = document.createElement('div');
@@ -337,18 +338,29 @@ function updateElectionsData(data) {
                             var candidateName = candidateInfo.get('name');
                             cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
                             card.addEventListener('click', function () {
-                                firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
-                                firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true);
+                                
                             }, false);
+                        }
+                        var voteFor = function () {
+                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
+                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true);
+                        };
+                        var unvoteFor = function () {
+                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(false);
+                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(false);
                         }
                         var flagSrc = candidateInfo.get('flag');
                         firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function (snapshot) {
                             if (snapshot.val()) {
                                 card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("' + flagSrc + '")';
                                 card.style.color = '#fff';
+                                card.removeEventListener('click', voteFor, false);
+                                card.addEventListener('click', unvoteFor, false);
                             } else {
                                 card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("' + flagSrc + '")';
                                 card.style.color = '#292b2c';
+                                card.removeEventListener('click', unvoteFor, false);
+                                card.addEventListener('click', voteFor, false);
                             }
                         });
                     });
