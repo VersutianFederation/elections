@@ -209,6 +209,11 @@ function updateElectionsData(data) {
             firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value', function (voted) {
                 var votedCounter = voted.numChildren();
                 if (forceVote || votedCounter === data.val().votes) { // if the person voted,
+                    if (votedCounter > 0) {
+                        firebase.database().ref('/elections/' + data.key + '/voters/' + internalName).set(true);
+                    } else {
+                        firebase.database().ref('/elections/' + data.key + '/voters/' + internalName).set(false);
+                    }
                     $('#' + data.key + '-inner').remove();
                     $('#' + data.key + '-submit-vote').remove();
                     var row = document.getElementById(data.key + '-voted');
@@ -281,38 +286,49 @@ function updateElectionsData(data) {
                         youVoted = document.createElement('p');
                         youVoted.setAttribute('id', data.key + '-voted-text');
                         row.appendChild(youVoted);
-                        var ballotText = document.createElement('p');
-                        ballotText.innerHTML = '<b>Ballots cast: </b>';
-                        row.appendChild(ballotText);
-                        var ballotCounter = document.createElement('span');
-                        ballotCounter.textContent = '0';
-                        ballotCounter.classList.add('counter');
-                        ballotCounter.setAttribute('data-count', 5);
-                        ballotText.appendChild(ballotCounter);
-                        var abstainText = document.createElement('p');
-                        abstainText.innerHTML = '<b>Abstentions: </b>';
-                        row.appendChild(abstainText);
-                        var abstainCounter = document.createElement('span');
-                        abstainCounter.textContent = '0';
-                        abstainCounter.classList.add('counter');
-                        abstainCounter.setAttribute('data-count', 5);
-                        abstainText.appendChild(abstainCounter);
-                        $('.counter').each(function() {
-                          var $this = $(this),
-                              countTo = $this.attr('data-count');
-                          $({ countNum: $this.text()}).animate({
-                            countNum: countTo
-                          },
-                          {
-                            duration: 1000,
-                            easing:'swing',
-                            step: function() {
-                              $this.text(Math.floor(this.countNum));
-                            },
-                            complete: function() {
-                              $this.text(this.countNum);
-                            }
-                          });  
+                        firebase.database().ref('/elections/' + data.key + '/voters').once('value', function(voters) {
+                            var ballots = 0;
+                            var abstains = 0;
+                            voters.forEach(function (voter) {
+                                if (voter.val()) {
+                                    ballots++;
+                                } else {
+                                    abstains++;
+                                }
+                            });
+                            var ballotText = document.createElement('p');
+                            ballotText.innerHTML = '<b>Ballots cast: </b>';
+                            row.appendChild(ballotText);
+                            var ballotCounter = document.createElement('span');
+                            ballotCounter.textContent = '0';
+                            ballotCounter.classList.add('counter');
+                            ballotCounter.setAttribute('data-count', ballots);
+                            ballotText.appendChild(ballotCounter);
+                            var abstainText = document.createElement('p');
+                            abstainText.innerHTML = '<b>Abstentions: </b>';
+                            row.appendChild(abstainText);
+                            var abstainCounter = document.createElement('span');
+                            abstainCounter.textContent = '0';
+                            abstainCounter.classList.add('counter');
+                            abstainCounter.setAttribute('data-count', abstains);
+                            abstainText.appendChild(abstainCounter);
+                            $('.counter').each(function() {
+                              var $this = $(this),
+                                  countTo = $this.attr('data-count');
+                              $({ countNum: $this.text()}).animate({
+                                countNum: countTo
+                              },
+                              {
+                                duration: 1000,
+                                easing:'swing',
+                                step: function() {
+                                  $this.text(Math.floor(this.countNum));
+                                },
+                                complete: function() {
+                                  $this.text(this.countNum);
+                                }
+                              });  
+                            });
                         });
                         var unvote = document.createElement('button');
                         unvote.textContent = 'Change vote';
@@ -324,6 +340,7 @@ function updateElectionsData(data) {
                                 firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).remove();
                             });
                             firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').set(false);
+                            firebase.database().ref('/elections/' + data.key + '/voters/' + internalName).remove();
                         }, false);
                         row.appendChild(unvote);
                     }
