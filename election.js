@@ -253,6 +253,7 @@ function updateElectionsData(data) {
                             chart.data.labels.push(nsRequest(candidate.key, ['name', 'flag']).get('name'));
                             chart.data.datasets.forEach((dataset) => {
                                 dataset.data.push(candidate.numChildren() - 1);
+                                console.log(candidate.key + ' - ' + (candidate.numChildren() - 1));
                                 h += goldenRatioConjugate;
                                 h %= 1;
                                 var rgb = randomColor(h, 0.5, 0.75);
