@@ -222,7 +222,7 @@ function updateElectionsData(data) {
                     var canvas = document.createElement('canvas');
                     canvasCont.appendChild(canvas);
                     chart = new Chart(canvas, {
-                        type: 'pie',
+                        type: 'doughnut',
                         data: {
                             labels: [],
                             datasets: [{
@@ -244,6 +244,7 @@ function updateElectionsData(data) {
                             dataset.data.push(candidate.numChildren() - 1);
                             var rgb = randomColor(Math.random(), 0.5, 0.95);
                             index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
+                            /*
                             var img = new Image();
                             img.src = nsRequest(candidate.key, ['name', 'flag']).get('flag');
                             img.onload = function() {
@@ -251,7 +252,7 @@ function updateElectionsData(data) {
                                 var fill = ctx.createPattern(img, 'repeat');
                                 dataset.backgroundColor[index] = fill;
                                 chart.update(0);
-                            };
+                            };*/
                         });
                     } else {
                         chart.data.datasets.forEach((dataset) => {
