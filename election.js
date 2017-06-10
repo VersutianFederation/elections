@@ -170,10 +170,10 @@ function updateElectionsData(data) {
         elections.appendChild(electionSection);
     }
     electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
-    firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function (snapshot) {
+    firebase.database().ref('/elections/' + data.key + '/options').on('value').then(function (snapshot) {
         //var pieChart = document.createElement('div');
         //pieChart.setAttribute('id', 'pie-' + data.key);
-        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value').then(function (voted) {
+        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value', function (voted) {
             var votedCounter = voted.numChildren();
             if (votedCounter === data.val().votes) { // if the person voted,
                 var youVoted = document.createElement('p');
@@ -232,9 +232,7 @@ function updateElectionsData(data) {
 
 function addElection(election) {
     var election = firebase.database().ref('elections/' + election.key);
-    election.on('value', function(snapshot) {
-       updateElectionsData(snapshot);
-    });
+    updateElectionsData(snapshot);
 }
 
 function unregisterElection(election) {
