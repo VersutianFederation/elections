@@ -197,7 +197,7 @@ function updateElectionsData(data) {
                             datasets: [{
                                 data: []
                             }]
-                        }
+                        },
                         options: {}
                     });
                 }
