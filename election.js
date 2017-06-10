@@ -191,40 +191,45 @@ function updateElectionsData(data) {
                         youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ', ';
                     }
                 });
+                electionSection.innerHTML = "";
                 electionSection.appendChild(youVoted);
             } else { // if they still need to vote
                 var electionInner = document.createElement('div');
                 electionInner.classList.add('card-columns');
                 electionSection.appendChild(electionInner);
                 snapshot.forEach(function (candidate) {
-                    var card = document.createElement('div');
-                    card.setAttribute('id', data.key + '-' + candidate.key);
-                    card.classList.add('card');
+                    var card = document.getElementById(data.key + '-' + candidate.key);
                     var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
+                    if (card === null) {
+                        card = document.createElement('div');
+                        card.setAttribute('id', data.key + '-' + candidate.key);
+                        card.classList.add('card');
+                        card.style.backgroundSize = 'cover';
+                        card.style.backgroundPosition = 'center';
+                        card.style.backgroundRepeat = 'no-repeat';
+                        card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("' + flagSrc + '")';
+                        electionInner.appendChild(card);
+                        var cardBlock = document.createElement('div');
+                        cardBlock.classList.add('card-block');
+                        card.appendChild(cardBlock);
+                        var candidateName = candidateInfo.get('name');
+                        cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
+                        document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function () {
+                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
+                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true);
+                        }, false);
+                    }
                     var flagSrc = candidateInfo.get('flag');
-                    card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("' + flagSrc + '")';
-                    card.style.backgroundSize = 'cover';
-                    card.style.backgroundPosition = 'center';
-                    card.style.backgroundRepeat = 'no-repeat';
                     firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function (snapshot) {
                         if (snapshot.val()) {
                             card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("' + flagSrc + '")';
                             card.style.color = '#fff';
+                        } else {
+                            card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("' + flagSrc + '")';
+                            card.style.color = '#292b2c';
                         }
                     });
-                    electionInner.appendChild(card);
-                    var cardBlock = document.createElement('div');
-                    cardBlock.classList.add('card-block');
-                    card.appendChild(cardBlock);
-                    var candidateName = candidateInfo.get('name');
-                    cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
-                    document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function () {
-                        firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
-                        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true);
-                    }, false);
                 });
-                electionSection.appendChild(document.createElement('br'));
-                electionSection.appendChild(document.createElement('br'));
             }
         });
     });
