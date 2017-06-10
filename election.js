@@ -245,7 +245,7 @@ function updateElectionsData(data) {
                             var rgb = randomColor(Math.random(), 0.5, 0.95);
                             index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
                             var img = new Image();
-                            img.src = nsRequest(candidate.key, ['name', 'flag'].get('flag'))
+                            img.src = nsRequest(candidate.key, ['name', 'flag']).get('flag');
                             img.onLoad = function() {
                                 var ctx = chart.canvas.getContext('2d');
                                 var fill = ctx.createPattern(img, 'no-repeat');
