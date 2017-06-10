@@ -231,8 +231,7 @@ function updateElectionsData(data) {
 }
 
 function addElection(election) {
-    var election = firebase.database().ref('elections/' + election.key);
-    updateElectionsData(snapshot);
+    updateElectionsData(election);
 }
 
 function unregisterElection(election) {
