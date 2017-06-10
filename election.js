@@ -237,7 +237,7 @@ function updateElectionsData(data) {
                     chartMap.set(data.key, chart);
                 }
                 snapshot.forEach(function (candidate) {
-                    var index = chart.data.labels.indexOf(candidate.key);
+                    var index = chart.data.labels.indexOf(nsRequest(candidate.key, ['name', 'flag']).get('name'));
                     if (index === -1) {
                         chart.data.labels.push(nsRequest(candidate.key, ['name', 'flag']).get('name'));
                         chart.data.datasets.forEach((dataset) => {
