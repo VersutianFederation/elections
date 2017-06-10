@@ -248,7 +248,7 @@ function updateElectionsData(data) {
                         chart.data.datasets.forEach((dataset) => {
                             dataset.data[index] = candidate.numChildren() - 1;
                             var rgb = randomColor(Math.random(), 0.5, 0.95);
-                            dataset.backgroundColor[index] = 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2]')';
+                            dataset.backgroundColor[index] = 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
                         });
                     }
                     if (chart.data.labels.length === snapshot.numChildren()) {
