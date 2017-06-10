@@ -215,10 +215,12 @@ function updateElectionsData(data) {
                 if (chartMap.has(data.key)) {
                     chart = chartMap.get(data.key);
                 } else {
+                    var canvasCont = document.createElement('div');
+                    canvasCont.style.width = 100%;
+                    canvasCont.style.height: 20vh;
+                    electionSection.appendChild(canvasCont);
                     var canvas = document.createElement('canvas');
-                    canvas.width = 400;
-                    canvas.height = 400;
-                    electionSection.appendChild(canvas);
+                    canvasCont.appendChild(canvas);
                     chart = new Chart(canvas, {
                         type: 'doughnut',
                         data: {
