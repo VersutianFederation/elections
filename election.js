@@ -191,7 +191,7 @@ function updateElectionsData(data) {
                         youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ', ';
                     }
                 });
-                electionSection.innerHTML = "";
+                electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
                 electionSection.appendChild(youVoted);
             } else { // if they still need to vote
                 var electionInner = document.createElement('div');
