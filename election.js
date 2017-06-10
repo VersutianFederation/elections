@@ -400,6 +400,7 @@ function expandHeader() {
 function signOut() {
     "use strict";
     firebase.auth().signOut();
+    chartMap.clear();
 }
 
 function initApp() {
