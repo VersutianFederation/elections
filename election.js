@@ -212,6 +212,7 @@ function updateElectionsData(data) {
                 }
                 if (votedCounter === data.val().votes) { // if the person voted,
                     $('#' + data.key + '-inner').remove();
+                    $('#' + data.key + '-submit-vote').remove();
                     var row = document.getElementById(data.key + '-voted');
                     if (row === null) {
                         row = document.createElement('div');
@@ -366,7 +367,6 @@ function updateElectionsData(data) {
                     });
                     var submitVoteButton = document.getElementById(data.key + '-submit-vote');
                     if (submitVoteButton === null) {
-                        electionInner.appendChild(document.createElement('br'));
                         submitVoteButton = document.createElement('button');
                         submitVoteButton.setAttribute('id', data.key + '-submit-vote');
                         submitVoteButton.classList.add('btn');
@@ -375,7 +375,7 @@ function updateElectionsData(data) {
                         submitVoteButton.addEventListener('click', function () {
                             firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').set(true);
                         }, false);
-                        electionInner.appendChild(submitVoteButton);
+                        electionSection.appendChild(submitVoteButton);
                     }
                 }
             });
