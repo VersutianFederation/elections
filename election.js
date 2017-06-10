@@ -305,7 +305,7 @@ function updateElectionsData(data) {
                           },
                           {
                             duration: 1000,
-                            easing:'linear',
+                            easing:'swing',
                             step: function() {
                               $this.text(Math.floor(this.countNum));
                             },
