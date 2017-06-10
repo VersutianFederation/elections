@@ -264,7 +264,6 @@ function updateElectionsData(data) {
                     youVoted = document.createElement('p');
                     youVoted.setAttribute('id', data.key + '-voted-text');
                     row.appendChild(youVoted);
-                    row.appendChild(document.createElement('br'));
                     var unvote = document.createElement('button');
                     unvote.textContent = 'Change vote';
                     unvote.classList.add('btn');
