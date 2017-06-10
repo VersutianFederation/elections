@@ -6,3 +6,12 @@
     width: 100%;
     min-height: 100px
 }
+#header-toggle {
+    color: #fff; 
+    border-color: #fff
+}
+#header-toggle:hover {
+    color: #000; 
+    border-color: #fff;
+    background-color: #fff;
+}

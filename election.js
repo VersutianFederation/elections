@@ -282,7 +282,7 @@ function expandHeader() {
     "use strict";
     document.getElementById('header-toggle').removeEventListener('click', expandHeader, false);
     document.getElementById('header-toggle').innerHTML = '<span class="fa fa-arrow-up" aria-hidden="true"></span> Collapse';
-    document.getElementById('header-inside').innerHTML = '<h1 class="display-3"><b>Versutian</b> Elections</h1><p class="lead">Welcome to the official voting site for the Versutian Federation.</p><p>Here, you may cast your ballot for current elections to participate in our democracy with a simple two step process &mdash; no registration required.</p><a class="btn btn-secondary" href="faq.html">Learn more</a>';
+    document.getElementById('header-inside').innerHTML = '<h1 class="display-3"><b>Versutian</b> Elections</h1><p class="lead">Welcome to the official voting site for the Versutian Federation.</p><p>Here, you may cast your ballot for current elections to participate in our democracy with a simple two step process &mdash; no registration required.</p><a class="btn btn-secondary" href="faq.html">Learn more</a><br><br>';
     document.getElementById('header').classList.add('jumbotron');
     document.getElementById('header').classList.add('jumbotron-fluid');
     document.getElementById('header').style.paddingTop = null;
