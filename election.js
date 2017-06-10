@@ -222,7 +222,7 @@ function updateElectionsData(data) {
                     var canvas = document.createElement('canvas');
                     canvasCont.appendChild(canvas);
                     chart = new Chart(canvas, {
-                        type: 'doughnut',
+                        type: 'pie',
                         data: {
                             labels: [],
                             datasets: [{
