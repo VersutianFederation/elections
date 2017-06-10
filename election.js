@@ -261,6 +261,16 @@ function updateElectionsData(data) {
                     youVoted = document.createElement('p');
                     youVoted.setAttribute('id', data.key + '-voted');
                     electionSection.appendChild(youVoted);
+                    youVoted.appendChild(document.createElement('br'));
+                    var unvote = document.createElement('button');
+                    unvote.textContent = 'Change vote';
+                    unvote.classList.add('btn');
+                    unvote.classList.add('btn-secondary');
+                    unvote.addEventListener('click', function () {
+                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).remove();
+                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).remove();
+                        }, false);
+                    youVoted.appendChild(unvote);
                 }
                 youVoted.innerHTML = 'You voted for ';
                 voted.forEach(function (candidate) {
