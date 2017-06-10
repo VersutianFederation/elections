@@ -211,7 +211,8 @@ function updateElectionsData(data) {
                     electionInner.appendChild(card);
                     var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
                     var flagSrc = candidateInfo.get('flag');
-                    card.style.backgroundImage += ', url("' + flagSrc + '")';
+                    console.log(flagSrc);
+                    card.style.backgroundImage += ", url('" + flagSrc + "')";
                     var cardBlock = document.createElement('div');
                     cardBlock.classList.add('card-block');
                     card.appendChild(cardBlock);
