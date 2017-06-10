@@ -293,6 +293,7 @@ function updateElectionsData(data) {
                 });
             } else { // if they still need to vote
                 $('#' + data.key + '-voted').remove();
+                chartMap.clear();
                 var electionInner = document.createElement('div');
                 electionInner.setAttribute('id', data.key + '-inner');
                 electionInner.classList.add('card-columns');
