@@ -165,7 +165,7 @@ function updateElectionsData(data) {
     firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function (snapshot) {
         var elections = document.getElementById('elections')
         var electionSection = document.getElementById('sec-' + data.key);
-        if (election == null) {
+        if (electionSection == null) {
             electionSection = document.createElement('div');
             electionSection.setAttribute('id', 'sec-' + data.key);
         } else {
