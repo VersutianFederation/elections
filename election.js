@@ -198,21 +198,19 @@ function updateElectionsData(data) {
                     var card = document.createElement('div');
                     card.setAttribute('id', data.key + '-' + candidate.key);
                     card.classList.add('card');
-                    card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6))';
+                    var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
+                    var flagSrc = candidateInfo.get('flag');
+                    card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("' + flagSrc + '")';
                     card.style.backgroundSize = 'cover';
                     card.style.backgroundPosition = 'center';
                     card.style.backgroundRepeat = 'no-repeat';
                     firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function (snapshot) {
                         if (snapshot.val()) {
-                            card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6))';
+                            card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("' + flagSrc + '")';
                             card.style.color = '#fff';
                         }
                     });
                     electionInner.appendChild(card);
-                    var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
-                    var flagSrc = candidateInfo.get('flag');
-                    console.log(flagSrc);
-                    card.style.backgroundImage += ", url('" + flagSrc + "')";
                     var cardBlock = document.createElement('div');
                     cardBlock.classList.add('card-block');
                     card.appendChild(cardBlock);
