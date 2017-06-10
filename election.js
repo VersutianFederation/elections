@@ -253,7 +253,6 @@ function updateElectionsData(data) {
                             chart.data.labels.push(nsRequest(candidate.key, ['name', 'flag']).get('name'));
                             chart.data.datasets.forEach((dataset) => {
                                 dataset.data.push(candidate.numChildren() - 1);
-                                console.log(candidate.key + ' - ' + (candidate.numChildren() - 1));
                                 h += goldenRatioConjugate;
                                 h %= 1;
                                 var rgb = randomColor(h, 0.5, 0.75);
@@ -282,6 +281,39 @@ function updateElectionsData(data) {
                         youVoted = document.createElement('p');
                         youVoted.setAttribute('id', data.key + '-voted-text');
                         row.appendChild(youVoted);
+                        var ballotText = document.createElement('p');
+                        ballotText.innerHTML = '<b>Ballots cast: </b>';
+                        row.appendChild(ballotText);
+                        var ballotCounter = document.createElement('span');
+                        ballotCounter.textContent = '0';
+                        ballotCounter.classList.add('counter');
+                        ballotCounter.setAttribute('data-count', 5);
+                        ballotText.appendChild(ballotCounter);
+                        var abstainText = document.createElement('p');
+                        abstainText.innerHTML = '<b>Abstentions: </b>';
+                        row.appendChild(abstainText);
+                        var abstainCounter = document.createElement('span');
+                        abstainCounter.textContent = '0';
+                        abstainCounter.classList.add('counter');
+                        abstainCounter.setAttribute('data-count', 5);
+                        abstainText.appendChild(abstainCounter);
+                        $('.counter').each(function() {
+                          var $this = $(this),
+                              countTo = $this.attr('data-count');
+                          $({ countNum: $this.text()}).animate({
+                            countNum: countTo
+                          },
+                          {
+                            duration: 1000,
+                            easing:'linear',
+                            step: function() {
+                              $this.text(Math.floor(this.countNum));
+                            },
+                            complete: function() {
+                              $this.text(this.countNum);
+                            }
+                          });  
+                        });
                         var unvote = document.createElement('button');
                         unvote.textContent = 'Change vote';
                         unvote.classList.add('btn');
