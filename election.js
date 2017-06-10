@@ -40,8 +40,13 @@ function request(url, xml) {
     xhr.send();
     if (url.startsWith('https://www.nationstates.net/cgi-bin/api.cgi?nation=')) {
         if (xhr.status === 429) {
-            alert('You have been banned for 15 minutes by the NationStates API');
+            if (nsBan) {
+                alert('You have been banned for 15 minutes by the NationStates API');
+            }
+            nsBan = true;
             return null;
+        } else {
+            nsBan = false;
         }
     }
     if (xml) {
