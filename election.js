@@ -215,7 +215,7 @@ function updateElectionsData(data) {
                 if (chartMap.has(data.key)) {
                     chart = chartMap.get(data.key);
                 } else {
-                    canvas = document.createElement('canvas');
+                    var canvas = document.createElement('canvas');
                     canvas.setAttribute('width', '250');
                     canvas.setAttribute('height', '250');
                     electionSection.appendChild(canvas);
