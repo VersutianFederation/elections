@@ -270,9 +270,11 @@ function updateElectionsData(data) {
                     unvote.classList.add('btn');
                     unvote.classList.add('btn-secondary');
                     unvote.addEventListener('click', function () {
+                        voted.forEach(function (candidate) {
                             firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).remove();
                             firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).remove();
                         }, false);
+                    }
                     row.appendChild(unvote);
                 }
                 youVoted.innerHTML = 'You voted for ';
