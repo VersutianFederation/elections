@@ -236,13 +236,17 @@ function updateElectionsData(data) {
                     });
                     chartMap.set(data.key, chart);
                 }
+                var goldenRatioConjugate = 0.618033988749895;
+                var h = Math.random();
                 snapshot.forEach(function (candidate) {
                     var index = chart.data.labels.indexOf(nsRequest(candidate.key, ['name', 'flag']).get('name'));
                     if (index === -1) {
                         chart.data.labels.push(nsRequest(candidate.key, ['name', 'flag']).get('name'));
                         chart.data.datasets.forEach((dataset) => {
                             dataset.data.push(candidate.numChildren() - 1);
-                            var rgb = randomColor(Math.random(), 0.5, 0.95);
+                            h += goldenRatioConjugate;
+                            h %= 1;
+                            var rgb = randomColor(h, 0.5, 0.95);
                             index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
                             /*
                             var img = new Image();
