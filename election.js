@@ -211,6 +211,9 @@ function updateElectionsData(data) {
             var votedCounter = voted.numChildren();
             if (votedCounter === data.val().votes) { // if the person voted,
                 $('#' + data.key + '-inner').remove();
+                var row = document.createElement(div);
+                row.setAttribute('id', data.key + '-voted');
+                electionSection.appendChild(row);
                 var chart;
                 if (chartMap.has(data.key)) {
                     chart = chartMap.get(data.key);
@@ -220,7 +223,7 @@ function updateElectionsData(data) {
                     canvasCont.style.margin = 'auto';
                     canvasCont.style.width = '100%';
                     canvasCont.style.height = '20vh';
-                    electionSection.appendChild(canvasCont);
+                    row.appendChild(canvasCont);
                     var canvas = document.createElement('canvas');
                     canvasCont.appendChild(canvas);
                     chart = new Chart(canvas, {
@@ -256,12 +259,12 @@ function updateElectionsData(data) {
                         chart.update();
                     }
                 });
-                var youVoted = document.getElementById(data.key + '-voted');
+                var youVoted = document.getElementById(data.key + '-voted-text');
                 if (youVoted === null) {
                     youVoted = document.createElement('p');
-                    youVoted.setAttribute('id', data.key + '-voted');
-                    electionSection.appendChild(youVoted);
-                    youVoted.appendChild(document.createElement('br'));
+                    youVoted.setAttribute('id', data.key + '-voted-text');
+                    row.appendChild(youVoted);
+                    row.appendChild(document.createElement('br'));
                     var unvote = document.createElement('button');
                     unvote.textContent = 'Change vote';
                     unvote.classList.add('btn');
@@ -270,7 +273,7 @@ function updateElectionsData(data) {
                             firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).remove();
                             firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).remove();
                         }, false);
-                    youVoted.appendChild(unvote);
+                    row.appendChild(unvote);
                 }
                 youVoted.innerHTML = 'You voted for ';
                 voted.forEach(function (candidate) {
