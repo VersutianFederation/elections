@@ -211,7 +211,7 @@ function updateElectionsData(data) {
             var votedCounter = voted.numChildren();
             if (votedCounter === data.val().votes) { // if the person voted,
                 $('#' + data.key + '-inner').remove();
-                var row = document.createElement(div);
+                var row = document.createElement('div');
                 row.setAttribute('id', data.key + '-voted');
                 electionSection.appendChild(row);
                 var chart;
