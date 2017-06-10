@@ -170,7 +170,7 @@ function updateElectionsData(data) {
         elections.appendChild(electionSection);
     }
     electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
-    firebase.database().ref('/elections/' + data.key + '/options').on('value').then(function (snapshot) {
+    firebase.database().ref('/elections/' + data.key + '/options').on('value', function (snapshot) {
         //var pieChart = document.createElement('div');
         //pieChart.setAttribute('id', 'pie-' + data.key);
         firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value', function (voted) {
