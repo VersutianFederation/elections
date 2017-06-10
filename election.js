@@ -294,6 +294,7 @@ function updateElectionsData(data) {
                         row.appendChild(unvote);
                     }
                     youVoted.innerHTML = 'You voted for ';
+                    votedCounter = voted.numChildren();
                     voted.forEach(function (candidate) {
                         votedCounter--;
                         var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
