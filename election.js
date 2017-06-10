@@ -248,7 +248,7 @@ function updateElectionsData(data) {
                             img.src = nsRequest(candidate.key, ['name', 'flag']).get('flag');
                             img.onload = function() {
                                 var ctx = chart.canvas.getContext('2d');
-                                var fill = ctx.createPattern(img, 'no-repeat');
+                                var fill = ctx.createPattern(img, 'repeat');
                                 dataset.backgroundColor[index] = fill;
                             };
                         });
