@@ -15,9 +15,6 @@ var nationName = "Unknown Nation";
 var yourNationFlag = "https://www.nationstates.net/images/flags/Default.png";
 var internalName;
 var verificationCode;
-var accessLevel = "CITIZEN";
-var officials = ["north_arkana", "asairia", "akohos"];
-var protectors = ["alamei"];
 var sub = 'versutian@appspot.gserviceaccount.com';
 var sPKCS8PEM = '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC9BUKL5OmnfAi6\n2TqOInGOCJ6aq44jC4503Y+NspbEkYF50PuzgtDNA356ZE987iKWoAOpLbRu9emG\nfeThjc+5CgTbJ0H8LPAfNb8uWBRd1JQm4X7nz5q9dDPkFt2+bG7Fxx6szaMKpRlN\n3w0ydk+7RIb+viizqym/XinTnW5KiDMPLbur+L1nlswYdTW445y16rbp4nTHKDGN\nYgqe72LdU0i5G80T2ZLS2zgpDD9myp0YU3k3MdtYthi7w7BnkBwAoB/zdg1NNi7y\ndXhQ684vSxRk972y+yyTzs42LOkzE0OIAc9/qnS8Kdgx0uhfnQirlO1Y3Qs+7Mo1\nUnQYggYtAgMBAAECggEAGeg7Jz5wUf7bmXSFpI6O/tcqmetyl1YRp+3oK5UzOezx\nkJc2sHN5F+hnMPJHvMlM31U+OzVi+iRlZgQiV1HfCy8W3EzErAIixTxSIFF9NSEa\nTzvv72jSfi4LoLMLoHpvMldo2mly89YOIlC0l9qEchfh4s+Ad6O5nJuU4wa8Y6WL\nkHQLzCS/mb38IlBL+jR4BfltFBCowWSDcXeTAn5rwStfSL/fJLNzIFvk77SdIh6Q\n4f3QAkTNYKQ0xGW2D12xlu9e9hzXLzwQWFHfigxbLSYYliCifjQVPXHPODwMZtsw\nKcFQc+wNfv7ECOagVY/+gnwcw+/yAcvI0GtvpZgihwKBgQD4MsxI6r4PbCwwWL8p\nrhFKXvMVftlXsjL1N0/EAE2QK3tOq0jgZ4iGnX0E3nTnyQxM4JIdOd/QxTU/jBLD\nHNpxzPk6mPDgdWlvn6Jod2BrGc4Dv/QaAIX+IMyYtz4fz6OfhehKDMQSihMZ0s/h\nuBy7qyY3MJ1a81XkihuBu0ehmwKBgQDC9kUG2VMVMdH7HXpGSByvfj3WpFBExDXO\nioK5BCLn8/lWUZ7jBhpN65wX+K5f7naty6Kxh5B+nW7hv1+wdOkjCZn9CZYU1Ga3\nMKznlOt3yfhrgpDaUlqiq8Ac9MlKjXE8cPqiwRMsZptLrtXY1dxwU+7/HY4qI7ld\nVXrcKXM31wKBgQCwhdh7J9FjQKkw/X2AVFfh0CQNLrm/wHKzqtIlcZ24ouRBMFtV\nlu0n6Myo8Nqum3QPHU1uUeIYJppXhvU1JclLVOARSANRcNA7Xorwx66gnarDSft/\nns2tz4AUQYeCsngKFf/+4pN1KBSrsh69x+dPpks4x2+y5ww4ze0AWMV6bwKBgGZk\nFl6Bdpvz/VbH5XbR2pbkUy/OPgXPkn61ye/HV1nAjVujJDIQ+3Ge4uzIAzSItbWS\n9BAOpXmJzzkqW+P9ko9/NGtrRHIOFx/wpW4+jOftn9U+zjqK8+TpFM1gVfMck7Lt\nlwQxKJOyE69M1Cy8LLilrCg56ncBKhH1mb/U2RkjAoGBALgBnHMIzhNQHJJcPEPk\nuLVnF+w3rFMH1m/JEngsxYp96BNLNcAoD/vA+Ie57+0ArGmAyQ5rs7jZAFiC5/pc\nB3wojXWg86UzK1h/EvthXYPqH+ukw0aoDuwiXBIIphxP5UOSnwHOFp/MWQyYNLLq\n1fs92SrrtEqiYhDSkAUCZxwb\n-----END PRIVATE KEY-----\n';
 var kid = '71485c8500b96d3a3ba4c46fdce05bc81ed0b55f';
@@ -129,11 +126,6 @@ function verify() {
         console.error(error);
     });
     var elections = document.getElementById('elections');
-    if (officials.indexOf(internalName) !== -1) {
-        accessLevel = "OFFICIAL";
-    } else if (protectors.indexOf(internalName) !== -1) {
-        accessLevel = "PROTECTOR";
-    }
 }
 
 /*
@@ -421,11 +413,11 @@ function initApp() {
             electionsData.on('child_removed', function(data) {
                 unregisterElection(data);
             });
-            if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
+            /* TODO: database authentication
                 elections.innerHTML += '<hr>';
                 elections.innerHTML += '<h2>Create new election</h2>';
                 elections.innerHTML += '<form><div class="form-group"><input type="text" class="form-control" id="election-name" placeholder="Election name"></div><div class="form-group"><label>Candidates</label><input type="text" class="form-control" id="election-name" placeholder="Nation name"> <br><input type="text" class="form-control" id="election-name" placeholder="Nation name"></div></form> <br><button class="btn btn-primary" onclick="add()">Create election</button><br>';
-            }
+            */
         } else {
             elections.innerHTML = '<h1>Login with NationStates</h1><div id="login-form"><form><div class="form-group" id="nation-name-group"><input type="text" class="form-control form-control-lg" id="nation-name" aria-describedby="nationHelpBlock" placeholder="Nation name"><div id="nation-name-feedback"></div><p id="nationHelpBlock" class="form-text text-muted">Your nation\'s short name, as it is displayed on NationStates, for example, <b>Akohos</b>.</p></div></form><br><iframe src="https://embed.nationstates.net/page=verify_login#proof_of_login_checksum" style="border:none; height: 33vh; width: 100%" id="ns-embed"></iframe><div id="embed-text"><p>If there is an error, or you need to switch nations, <button id="embed-switch" class="btn btn-secondary btn-sm">login first</button></p></div><br><form><div class="form-group" id="verification-code-group"><input type="text" class="form-control" id="verification-code" aria-describedby="codeHelpBlock" placeholder="Code"><div id="verification-code-feedback"></div><p id="codeHelpBlock" class="form-text text-muted">Copy the code you see from the NationStates.net page into this box.</p></div></form><br><button class="btn btn-primary" onclick="verify()">Login</button></div><br><br>';
             document.getElementById('embed-switch').addEventListener('click', loginEmbed, false);
