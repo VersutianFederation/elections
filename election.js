@@ -354,6 +354,7 @@ function updateElectionsData(data) {
                     });
                     var submitVoteButton = document.getElementById(data.key + '-submit-vote');
                     if (submitVoteButton === null) {
+                        electionInnter.appendChild(document.createElement('br'));
                         submitVoteButton = document.createElement('button');
                         submitVoteButton.setAttribute('id', data.key + '-submit-vote');
                         submitVoteButton.classList.add('btn');
