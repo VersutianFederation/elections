@@ -160,6 +160,8 @@ function removeElection(election) {
     $('#sec-' + election.key).remove();
 }
 
+var chartMap = new Map();
+
 function updateElectionsData(data) {
     "use strict";
     var elections = document.getElementById('elections');
@@ -171,11 +173,50 @@ function updateElectionsData(data) {
     }
     electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
     firebase.database().ref('/elections/' + data.key + '/options').on('value', function (snapshot) {
-        //var pieChart = document.createElement('div');
-        //pieChart.setAttribute('id', 'pie-' + data.key);
         firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value', function (voted) {
             var votedCounter = voted.numChildren();
             if (votedCounter === data.val().votes) { // if the person voted,
+                $('#' + data.key + '-inner').remove();
+                var canvas = document.getElementById(data.key + "-chart");
+                if (canvas === null) {
+                    canvas = document.createElement('canvas');
+                    canvas.setAttribute('id', data.key + "-chart");
+                    canvas.style.width = '50%';
+                    canvas.style.minHeight = '10vh';
+                    electionSection.appendChild(canvas);
+                }
+                var ctx = canvas.getContext('2d');
+                var chart;
+                if (chartMap.has(data.key)) {
+                    chart = chartMap.get(data.key);
+                } else {
+                    chart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                data: []
+                            }]
+                        }
+                        options: {}
+                    });
+                }
+                snapshot.forEach(function (candidate) {
+                    var index = chart.data.labels.indexOf(candidate.key);
+                    if (index === -1) {
+                        chart.data.labels.push(candidate.key);
+                        chart.data.datasets.forEach((dataset) => {
+                            dataset.data.push(candidate.numChildren() - 1);
+                        });
+                    } else {
+                        chart.data.datasets.forEach((dataset) => {
+                            dataset.data[index] = candidate.numChildren() - 1;
+                        });
+                    }
+                    if (chart.data.labels.length === snapshot.numChildren()) {
+                        chart.update();
+                    }
+                });
                 var youVoted = document.createElement('p');
                 youVoted.setAttribute('id', data.key + '-voted');
                 youVoted.innerHTML = 'You voted for ';
@@ -192,11 +233,11 @@ function updateElectionsData(data) {
                         youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ', ';
                     }
                 });
-                electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
                 electionSection.appendChild(youVoted);
             } else { // if they still need to vote
                 $('#' + data.key + '-voted').remove();
                 var electionInner = document.createElement('div');
+                electionInner.setAttribute('id', data.key + '-inner');
                 electionInner.classList.add('card-columns');
                 electionSection.appendChild(electionInner);
                 snapshot.forEach(function (candidate) {
