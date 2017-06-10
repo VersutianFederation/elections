@@ -199,7 +199,6 @@ function updateElectionsData(data) {
     }
     electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
     firebase.database().ref('/elections/' + data.key + '/options').on('value', function (snapshot) {
-        var votedCounter;
         var forceVote = false;
         firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').on('value', function (submitted) {
             if (submitted.val()) {
@@ -208,7 +207,7 @@ function updateElectionsData(data) {
                 forceVote = false;
             }
             firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value', function (voted) {
-                votedCounter = voted.numChildren();
+                var votedCounter = voted.numChildren();
                 if (forceVote || votedCounter === data.val().votes) { // if the person voted,
                     $('#' + data.key + '-inner').remove();
                     $('#' + data.key + '-submit-vote').remove();
@@ -339,9 +338,6 @@ function updateElectionsData(data) {
                             card.appendChild(cardBlock);
                             var candidateName = candidateInfo.get('name');
                             cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
-                            card.addEventListener('click', function () {
-                                
-                            }, false);
                         }
                         var voteFor = function () {
                             firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
