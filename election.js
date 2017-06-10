@@ -199,149 +199,171 @@ function updateElectionsData(data) {
     }
     electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
     firebase.database().ref('/elections/' + data.key + '/options').on('value', function (snapshot) {
-        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value', function (voted) {
-            var votedCounter = voted.numChildren();
-            if (votedCounter === data.val().votes) { // if the person voted,
-                $('#' + data.key + '-inner').remove();
-                var row = document.getElementById(data.key + '-voted');
-                if (row === null) {
-                    row = document.createElement('div');
-                    row.setAttribute('id', data.key + '-voted');
-                    electionSection.appendChild(row);
-                }
-                var chart;
-                if (chartMap.has(data.key)) {
-                    chart = chartMap.get(data.key);
-                } else {
-                    var canvasCont = document.createElement('div');
-                    canvasCont.style.position = 'relative';
-                    canvasCont.style.margin = 'auto';
-                    canvasCont.style.width = '100%';
-                    canvasCont.style.height = '20vh';
-                    row.appendChild(canvasCont);
-                    var canvas = document.createElement('canvas');
-                    canvasCont.appendChild(canvas);
-                    chart = new Chart(canvas, {
-                        type: 'doughnut',
-                        data: {
-                            labels: [],
-                            datasets: [{
-                                data: [],
-                                backgroundColor: []
-                            }]
-                        },
-                        options: {
-                            maintainAspectRatio: false
-                        }
-                    });
-                    chartMap.set(data.key, chart);
-                }
-                var goldenRatioConjugate = 0.618033988749895;
-                var h = Math.random();
-                snapshot.forEach(function (candidate) {
-                    var index = chart.data.labels.indexOf(nsRequest(candidate.key, ['name', 'flag']).get('name'));
-                    if (index === -1) {
-                        chart.data.labels.push(nsRequest(candidate.key, ['name', 'flag']).get('name'));
-                        chart.data.datasets.forEach((dataset) => {
-                            dataset.data.push(candidate.numChildren() - 1);
-                            h += goldenRatioConjugate;
-                            h %= 1;
-                            var rgb = randomColor(h, 0.5, 0.95);
-                            index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
-                            /*
-                            var img = new Image();
-                            img.src = nsRequest(candidate.key, ['name', 'flag']).get('flag');
-                            img.onload = function() {
-                                var ctx = chart.canvas.getContext('2d');
-                                var fill = ctx.createPattern(img, 'repeat');
-                                dataset.backgroundColor[index] = fill;
-                                chart.update(0);
-                            };*/
-                        });
-                    } else {
-                        chart.data.datasets.forEach((dataset) => {
-                            dataset.data[index] = candidate.numChildren() - 1;
-                        });
-                    }
-                    if (chart.data.labels.length === snapshot.numChildren()) {
-                        chart.update();
-                    }
-                });
-                var youVoted = document.getElementById(data.key + '-voted-text');
-                if (youVoted === null) {
-                    youVoted = document.createElement('p');
-                    youVoted.setAttribute('id', data.key + '-voted-text');
-                    row.appendChild(youVoted);
-                    var unvote = document.createElement('button');
-                    unvote.textContent = 'Change vote';
-                    unvote.classList.add('btn');
-                    unvote.classList.add('btn-secondary');
-                    unvote.addEventListener('click', function () {
-                        voted.forEach(function (candidate) {
-                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).remove();
-                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).remove();
-                        });
-                    }, false);
-                    row.appendChild(unvote);
-                }
-                youVoted.innerHTML = 'You voted for ';
-                voted.forEach(function (candidate) {
-                    votedCounter--;
-                    var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
-                    var candidateName = candidateInfo.get('name');
-                    var candidateFlag = candidateInfo.get('flag');
-                    if (votedCounter === 0) {
-                        youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + '.';
-                    } else if (votedCounter === 1) {
-                        youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ' and ';
-                    } else {
-                        youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ', ';
-                    }
-                });
-            } else { // if they still need to vote
-                $('#' + data.key + '-voted').remove();
-                chartMap.clear();
-                var electionInner = document.getElementById(data.key + '-inner');
-                if (electionInner === null) {
-                    var electionInner = document.createElement('div');
-                    electionInner.setAttribute('id', data.key + '-inner');
-                    electionInner.classList.add('card-columns');
-                    electionSection.appendChild(electionInner);
-                }
-                snapshot.forEach(function (candidate) {
-                    var card = document.getElementById(data.key + '-' + candidate.key);
-                    var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
-                    if (card === null) {
-                        card = document.createElement('div');
-                        card.setAttribute('id', data.key + '-' + candidate.key);
-                        card.classList.add('card');
-                        card.style.backgroundSize = 'cover';
-                        card.style.backgroundPosition = 'center';
-                        card.style.backgroundRepeat = 'no-repeat';
-                        card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("' + flagSrc + '")';
-                        electionInner.appendChild(card);
-                        var cardBlock = document.createElement('div');
-                        cardBlock.classList.add('card-block');
-                        card.appendChild(cardBlock);
-                        var candidateName = candidateInfo.get('name');
-                        cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
-                        document.getElementById(data.key + '-' + candidate.key).addEventListener('click', function () {
-                            firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
-                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true);
-                        }, false);
-                    }
-                    var flagSrc = candidateInfo.get('flag');
-                    firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function (snapshot) {
-                        if (snapshot.val()) {
-                            card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("' + flagSrc + '")';
-                            card.style.color = '#fff';
-                        } else {
-                            card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("' + flagSrc + '")';
-                            card.style.color = '#292b2c';
-                        }
-                    });
-                });
+        var votedCounter;
+        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').once('value', function (submitted) {
+            if (submitted.val()) {
+                votedCounter = -1;
             }
+            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value', function (voted) {
+                if (votedCounter === -1) {
+                    votedCounter = data.val().votes;
+                } else {
+                    votedCounter = voted.numChildren();
+                }
+                if (votedCounter === data.val().votes) { // if the person voted,
+                    $('#' + data.key + '-inner').remove();
+                    var row = document.getElementById(data.key + '-voted');
+                    if (row === null) {
+                        row = document.createElement('div');
+                        row.setAttribute('id', data.key + '-voted');
+                        electionSection.appendChild(row);
+                    }
+                    var chart;
+                    if (chartMap.has(data.key)) {
+                        chart = chartMap.get(data.key);
+                    } else {
+                        var canvasCont = document.createElement('div');
+                        canvasCont.style.position = 'relative';
+                        canvasCont.style.margin = 'auto';
+                        canvasCont.style.width = '100%';
+                        canvasCont.style.height = '20vh';
+                        row.appendChild(canvasCont);
+                        var canvas = document.createElement('canvas');
+                        canvasCont.appendChild(canvas);
+                        chart = new Chart(canvas, {
+                            type: 'doughnut',
+                            data: {
+                                labels: [],
+                                datasets: [{
+                                    data: [],
+                                    backgroundColor: []
+                                }]
+                            },
+                            options: {
+                                maintainAspectRatio: false
+                            }
+                        });
+                        chartMap.set(data.key, chart);
+                    }
+                    var goldenRatioConjugate = 0.618033988749895;
+                    var h = Math.random();
+                    snapshot.forEach(function (candidate) {
+                        var index = chart.data.labels.indexOf(nsRequest(candidate.key, ['name', 'flag']).get('name'));
+                        if (index === -1) {
+                            chart.data.labels.push(nsRequest(candidate.key, ['name', 'flag']).get('name'));
+                            chart.data.datasets.forEach((dataset) => {
+                                dataset.data.push(candidate.numChildren() - 1);
+                                h += goldenRatioConjugate;
+                                h %= 1;
+                                var rgb = randomColor(h, 0.5, 0.95);
+                                index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
+                                /*
+                                var img = new Image();
+                                img.src = nsRequest(candidate.key, ['name', 'flag']).get('flag');
+                                img.onload = function() {
+                                    var ctx = chart.canvas.getContext('2d');
+                                    var fill = ctx.createPattern(img, 'repeat');
+                                    dataset.backgroundColor[index] = fill;
+                                    chart.update(0);
+                                };*/
+                            });
+                        } else {
+                            chart.data.datasets.forEach((dataset) => {
+                                dataset.data[index] = candidate.numChildren() - 1;
+                            });
+                        }
+                        if (chart.data.labels.length === snapshot.numChildren()) {
+                            chart.update();
+                        }
+                    });
+                    var youVoted = document.getElementById(data.key + '-voted-text');
+                    if (youVoted === null) {
+                        youVoted = document.createElement('p');
+                        youVoted.setAttribute('id', data.key + '-voted-text');
+                        row.appendChild(youVoted);
+                        var unvote = document.createElement('button');
+                        unvote.textContent = 'Change vote';
+                        unvote.classList.add('btn');
+                        unvote.classList.add('btn-secondary');
+                        unvote.addEventListener('click', function () {
+                            voted.forEach(function (candidate) {
+                                firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).remove();
+                                firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).remove();
+                            });
+                        }, false);
+                        row.appendChild(unvote);
+                    }
+                    youVoted.innerHTML = 'You voted for ';
+                    voted.forEach(function (candidate) {
+                        votedCounter--;
+                        var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
+                        var candidateName = candidateInfo.get('name');
+                        var candidateFlag = candidateInfo.get('flag');
+                        if (votedCounter === 0) {
+                            youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + '.';
+                        } else if (votedCounter === 1) {
+                            youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ' and ';
+                        } else {
+                            youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ', ';
+                        }
+                    });
+                } else { // if they still need to vote
+                    $('#' + data.key + '-voted').remove();
+                    chartMap.clear();
+                    var electionInner = document.getElementById(data.key + '-inner');
+                    if (electionInner === null) {
+                        var electionInner = document.createElement('div');
+                        electionInner.setAttribute('id', data.key + '-inner');
+                        electionInner.classList.add('card-columns');
+                        electionSection.appendChild(electionInner);
+                    }
+                    snapshot.forEach(function (candidate) {
+                        var card = document.getElementById(data.key + '-' + candidate.key);
+                        var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
+                        if (card === null) {
+                            card = document.createElement('div');
+                            card.setAttribute('id', data.key + '-' + candidate.key);
+                            card.classList.add('card');
+                            card.style.backgroundSize = 'cover';
+                            card.style.backgroundPosition = 'center';
+                            card.style.backgroundRepeat = 'no-repeat';
+                            card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("' + flagSrc + '")';
+                            electionInner.appendChild(card);
+                            var cardBlock = document.createElement('div');
+                            cardBlock.classList.add('card-block');
+                            card.appendChild(cardBlock);
+                            var candidateName = candidateInfo.get('name');
+                            cardBlock.innerHTML += '<h4 class="card-title">' + candidateName + '</h4>';
+                            card.addEventListener('click', function () {
+                                firebase.database().ref('/elections/' + data.key + '/options/' + candidate.key + '/' + internalName).set(true);
+                                firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).set(true);
+                            }, false);
+                        }
+                        var flagSrc = candidateInfo.get('flag');
+                        firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/' + candidate.key).once('value').then(function (snapshot) {
+                            if (snapshot.val()) {
+                                card.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("' + flagSrc + '")';
+                                card.style.color = '#fff';
+                            } else {
+                                card.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("' + flagSrc + '")';
+                                card.style.color = '#292b2c';
+                            }
+                        });
+                    });
+                    var submitVoteButton = document.getElementById(data.key + '-submit-vote');
+                    if (submitVoteButton === null) {
+                        submitVoteButton = document.createElement('button');
+                        submitVoteButton.setAttribute('id', data.key + '-submit-vote');
+                        submitVoteButton.classList.add('btn');
+                        submitVoteButton.classList.add('btn-secondary');
+                        submitVoteButton.textContent = 'Submit vote';
+                        submitVoteButton.addEventListener('click', function () {
+                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').set(true);
+                        }, false);
+                        electionInner.appendChild(submitVoteButton);
+                    }
+                }
+            });
         });
     });
 }
