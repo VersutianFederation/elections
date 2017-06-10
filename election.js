@@ -216,8 +216,8 @@ function updateElectionsData(data) {
                     chart = chartMap.get(data.key);
                 } else {
                     var canvasCont = document.createElement('div');
-                    convasCont.style.position = 'relative';
-                    convasCont.style.margin = 'auto';
+                    canvasCont.style.position = 'relative';
+                    canvasCont.style.margin = 'auto';
                     canvasCont.style.width = '100%';
                     canvasCont.style.height = '20vh';
                     electionSection.appendChild(canvasCont);
