@@ -313,7 +313,6 @@ function updateElectionsData(data) {
                 } else { // if they still need to vote
                     $('#' + data.key + '-voted').remove();
                     chartMap.clear();
-                    
                     var electionInner = document.getElementById(data.key + '-inner');
                     if (electionInner === null) {
                         var electionInner = document.createElement('div');
@@ -365,17 +364,19 @@ function updateElectionsData(data) {
                             }
                         });
                     });
-                    var submitVoteButton = document.getElementById(data.key + '-submit-vote');
-                    if (submitVoteButton === null) {
-                        submitVoteButton = document.createElement('button');
-                        submitVoteButton.setAttribute('id', data.key + '-submit-vote');
-                        submitVoteButton.classList.add('btn');
-                        submitVoteButton.classList.add('btn-secondary');
-                        submitVoteButton.textContent = 'Submit vote';
-                        submitVoteButton.addEventListener('click', function () {
-                            firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').set(true);
-                        }, false);
-                        electionSection.appendChild(submitVoteButton);
+                    if (snapshot.numChildren() > 2) {
+                        var submitVoteButton = document.getElementById(data.key + '-submit-vote');
+                        if (submitVoteButton === null) {
+                            submitVoteButton = document.createElement('button');
+                            submitVoteButton.setAttribute('id', data.key + '-submit-vote');
+                            submitVoteButton.classList.add('btn');
+                            submitVoteButton.classList.add('btn-secondary');
+                            submitVoteButton.textContent = 'Submit vote';
+                            submitVoteButton.addEventListener('click', function () {
+                                firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/voted').set(true);
+                            }, false);
+                            electionSection.appendChild(submitVoteButton);
+                        }
                     }
                 }
             });
