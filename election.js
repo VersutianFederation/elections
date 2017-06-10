@@ -211,9 +211,12 @@ function updateElectionsData(data) {
             var votedCounter = voted.numChildren();
             if (votedCounter === data.val().votes) { // if the person voted,
                 $('#' + data.key + '-inner').remove();
-                var row = document.createElement('div');
-                row.setAttribute('id', data.key + '-voted');
-                electionSection.appendChild(row);
+                var row = document.getElementById(data.key + '-voted');
+                if (row === null) {
+                    row = document.createElement('div');
+                    row.setAttribute('id', data.key + '-voted');
+                    electionSection.appendChild(row);
+                }
                 var chart;
                 if (chartMap.has(data.key)) {
                     chart = chartMap.get(data.key);
