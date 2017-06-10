@@ -162,17 +162,15 @@ function removeElection(election) {
 
 function updateElectionsData(data) {
     "use strict";
-    firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function (snapshot) {
-        var elections = document.getElementById('elections')
-        var electionSection = document.getElementById('sec-' + data.key);
-        if (electionSection == null) {
-            electionSection = document.createElement('div');
-            electionSection.setAttribute('id', 'sec-' + data.key);
-        } else {
-            electionSection.innerHTML = "";
-        }
-        electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
+    var elections = document.getElementById('elections');
+    var electionSection = document.getElementById('sec-' + data.key);
+    if (electionSection === null) {
+        electionSection = document.createElement('div');
+        electionSection.setAttribute('id', 'sec-' + data.key);
         elections.appendChild(electionSection);
+    }
+    electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
+    firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function (snapshot) {
         //var pieChart = document.createElement('div');
         //pieChart.setAttribute('id', 'pie-' + data.key);
         firebase.database().ref('/citizens/' + internalName + '/' + data.key + '/choices/').once('value').then(function (voted) {
