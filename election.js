@@ -162,11 +162,15 @@ function removeElection(election) {
 
 function updateElectionsData(data) {
     "use strict";
-    removeElection(data);
     firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function (snapshot) {
-        var elections = document.getElementById('elections'),
+        var elections = document.getElementById('elections')
+        var electionSection = document.getElementById('sec-' + data.key);
+        if (election == null) {
             electionSection = document.createElement('div');
-        electionSection.setAttribute('id', 'sec-' + data.key);
+            electionSection.setAttribute('id', 'sec-' + data.key);
+        } else {
+            electionSection.innerHTML = "";
+        }
         electionSection.innerHTML = '<hr><h2>' + data.val().election + '</h2>';
         elections.appendChild(electionSection);
         //var pieChart = document.createElement('div');
@@ -310,7 +314,7 @@ function initApp() {
                 addElection(data);
             });
             electionsData.on('child_removed', function(data) {
-                removeElection(data);
+                unregisterElection(data);
             });
             if (accessLevel === "OFFICIAL" || accessLevel === "PROTECTOR") {
                 elections.innerHTML += '<hr>';
