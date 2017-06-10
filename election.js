@@ -155,7 +155,7 @@ function removeElection(election) {
 
 function updateElectionsData(data) {
     "use strict";
-    removeElection(election);
+    removeElection(data);
     firebase.database().ref('/elections/' + data.key + '/options').once('value').then(function (snapshot) {
         var elections = document.getElementById('elections'),
             electionSection = document.createElement('div');
