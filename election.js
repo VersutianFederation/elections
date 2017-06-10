@@ -257,7 +257,7 @@ function updateElectionsData(data) {
                                 dataset.data.push(candidate.numChildren() - 1);
                                 h += goldenRatioConjugate;
                                 h %= 1;
-                                var rgb = randomColor(h, 0.5, 0.95);
+                                var rgb = randomColor(h, 0.5, 0.5);
                                 index = dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') - 1;
                                 /*
                                 var img = new Image();
