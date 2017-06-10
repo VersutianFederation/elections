@@ -350,9 +350,9 @@ function unregisterElection(election) {
 function startElections() {
     "use strict";
     var elections = document.getElementById('elections');
-    elections.innerHTML = '<h1>Vote</h1>';
-    elections.innerHTML += '<p class="lead">Welcome, <img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + yourNationFlag + '">' + nationName + '. Vote on these elections:</p><p><small>Not ' + nationName + ' or on a public device? </small> <button class="btn btn-secondary btn-sm" onclick="signOut()">sign out</button></p>';
-    $('#elections').after('<br><br>');
+    elections.innerHTML = '<p><span class="lead">Welcome, <img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + yourNationFlag + '">' + nationName + '.</span><small> Not ' + nationName + ' or on a public device? </small> <button class="btn btn-secondary btn-sm" onclick="signOut()">sign out</button></p>';
+    elections.innerHTML += '<h1 class="display-4">Vote</h1>';
+    $('#elections').after('<div class="container"><hr><h1 class="display-4">Past Elections</h1><p>There are no past elections at this time.</p><br><br></div>');
 }
 
 function loginEmbed() {
