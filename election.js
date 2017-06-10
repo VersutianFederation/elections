@@ -288,10 +288,13 @@ function updateElectionsData(data) {
             } else { // if they still need to vote
                 $('#' + data.key + '-voted').remove();
                 chartMap.clear();
-                var electionInner = document.createElement('div');
-                electionInner.setAttribute('id', data.key + '-inner');
-                electionInner.classList.add('card-columns');
-                electionSection.appendChild(electionInner);
+                var electionInner = document.getElementById(data.key + '-inner');
+                if (electionInner === null) {
+                    var electionInner = document.createElement('div');
+                    electionInner.setAttribute('id', data.key + '-inner');
+                    electionInner.classList.add('card-columns');
+                    electionSection.appendChild(electionInner);
+                }
                 snapshot.forEach(function (candidate) {
                     var card = document.getElementById(data.key + '-' + candidate.key);
                     var candidateInfo = nsRequest(candidate.key, ['flag', 'name']);
