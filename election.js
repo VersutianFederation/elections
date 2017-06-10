@@ -211,20 +211,15 @@ function updateElectionsData(data) {
             var votedCounter = voted.numChildren();
             if (votedCounter === data.val().votes) { // if the person voted,
                 $('#' + data.key + '-inner').remove();
-                var canvas = document.getElementById(data.key + "-chart");
-                if (canvas === null) {
-                    canvas = document.createElement('canvas');
-                    canvas.setAttribute('id', data.key + "-chart");
-                    canvas.setAttribute('width', '250');
-                    canvas.setAttribute('height', '250');
-                    electionSection.appendChild(canvas);
-                }
-                var ctx = canvas.getContext('2d');
                 var chart;
-                
                 if (chartMap.has(data.key)) {
                     chart = chartMap.get(data.key);
                 } else {
+                    canvas = document.createElement('canvas');
+                    canvas.setAttribute('width', '250');
+                    canvas.setAttribute('height', '250');
+                    electionSection.appendChild(canvas);
+                    var ctx = canvas.getContext('2d');
                     chart = new Chart(ctx, {
                         type: 'doughnut',
                         data: {
@@ -236,6 +231,7 @@ function updateElectionsData(data) {
                         },
                         options: {}
                     });
+                    chartMap.set(data.key, chart);
                 }
                 snapshot.forEach(function (candidate) {
                     var index = chart.data.labels.indexOf(candidate.key);
@@ -243,12 +239,12 @@ function updateElectionsData(data) {
                         chart.data.labels.push(candidate.key);
                         chart.data.datasets.forEach((dataset) => {
                             dataset.data.push(candidate.numChildren() - 1);
+                            var rgb = randomColor(Math.random(), 0.5, 0.95);
+                            dataset.backgroundColor.push('rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')');
                         });
                     } else {
                         chart.data.datasets.forEach((dataset) => {
                             dataset.data[index] = candidate.numChildren() - 1;
-                            var rgb = randomColor(Math.random(), 0.5, 0.95);
-                            dataset.backgroundColor[index] = 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
                         });
                     }
                     if (chart.data.labels.length === snapshot.numChildren()) {
