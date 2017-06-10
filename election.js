@@ -194,8 +194,6 @@ function randomColor(h, s, v) {
     return [Math.floor(r * 256), Math.floor(g * 256), Math.floor(b * 256)]
 }
 
-var chartMap = new Map();
-
 function updateElectionsData(data) {
     "use strict";
     var elections = document.getElementById('elections');
@@ -212,13 +210,11 @@ function updateElectionsData(data) {
             if (votedCounter === data.val().votes) { // if the person voted,
                 $('#' + data.key + '-inner').remove();
                 var chart;
-                if (chartMap.has(data.key)) {
-                    chart = chartMap.get(data.key);
-                } else {
-                    var canvas = document.createElement('canvas');
-                    canvas.setAttribute('width', '250');
-                    canvas.setAttribute('height', '250');
-                    electionSection.appendChild(canvas);
+                if (document.getElementById(data.key + '-chart') === null) {
+                    var canvasCont = document.createElement('div');
+                    electionSection.appendChild(canvasCont);
+                    canvasCont.innerHTML = '<canvas id="' + data.key + '-chart' + '" width="250" height="250"></canvas>'
+                    var canvas = document.getElementById(data.key + '-chart');
                     var ctx = canvas.getContext('2d');
                     chart = new Chart(ctx, {
                         type: 'doughnut',
@@ -236,7 +232,7 @@ function updateElectionsData(data) {
                 snapshot.forEach(function (candidate) {
                     var index = chart.data.labels.indexOf(candidate.key);
                     if (index === -1) {
-                        chart.data.labels.push(candidate.key);
+                        chart.data.labels.push(nsRequest(candidate.key, ['name']).get('name'));
                         chart.data.datasets.forEach((dataset) => {
                             dataset.data.push(candidate.numChildren() - 1);
                             var rgb = randomColor(Math.random(), 0.5, 0.95);
@@ -251,8 +247,12 @@ function updateElectionsData(data) {
                         chart.update();
                     }
                 });
-                var youVoted = document.createElement('p');
-                youVoted.setAttribute('id', data.key + '-voted');
+                var youVoted = document.getElementById(data.key + '-voted');
+                if (youVoted === null) {
+                    youVoted = document.createElement('p');
+                    youVoted.setAttribute('id', data.key + '-voted');
+                    electionSection.appendChild(youVoted);
+                }
                 youVoted.innerHTML = 'You voted for ';
                 voted.forEach(function (candidate) {
                     votedCounter--;
@@ -267,7 +267,6 @@ function updateElectionsData(data) {
                         youVoted.innerHTML += '<img style="max-height: 13px; max-width: 20px; margin-right: 4px" src="' + candidateFlag + '">' + candidateName + ', ';
                     }
                 });
-                electionSection.appendChild(youVoted);
             } else { // if they still need to vote
                 $('#' + data.key + '-voted').remove();
                 var electionInner = document.createElement('div');
