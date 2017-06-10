@@ -250,6 +250,7 @@ function updateElectionsData(data) {
                                 var ctx = chart.canvas.getContext('2d');
                                 var fill = ctx.createPattern(img, 'repeat');
                                 dataset.backgroundColor[index] = fill;
+                                chart.update(0);
                             };
                         });
                     } else {
